@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../models/menu_item.dart';
-import '../models/order_model.dart';
-import '../models/user_model.dart';
+import 'package:mon_pfapp/domain/models/menu_item.dart';
+import 'package:mon_pfapp/domain/models/order_model.dart';
+import 'package:mon_pfapp/domain/models/user_model.dart';
 
 class DemoData {
   static final demoUser = UserModel(

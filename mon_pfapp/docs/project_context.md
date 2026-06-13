@@ -25,7 +25,7 @@ parcours de commande complet :
 - l'administrateur consulte les indicateurs et l'equipe ;
 - l'utilisateur peut se deconnecter.
 
-## Architecture simple
+## Architecture fonctionnelle
 
 ```mermaid
 flowchart LR
@@ -36,6 +36,15 @@ flowchart LR
   Auth --> User["UserModel"]
   User --> Home["HomeScreen"]
 ```
+
+Le code Flutter est maintenant organise par couches :
+
+- `app/` pour le lancement et la navigation principale ;
+- `domain/models/` pour les objets metier du diagramme de classe ;
+- `features/auth/` pour l'authentification ;
+- `features/client/` pour les parcours client ;
+- `features/operations/` pour administrateur et livreur ;
+- `shared/widgets/` pour les composants visuels reutilisables.
 
 ## Pourquoi les corrections etaient importantes
 

@@ -66,6 +66,13 @@ Fonctionnalites disponibles :
 - liste des commandes ;
 - liste de l'equipe.
 
+## Espace serveur
+
+Le cahier de charge mentionne aussi un acteur `Serveur` pour les commandes sur
+place. Dans la version Flutter actuelle, ce besoin est represente par le flux
+operationnel/admin. Il peut devenir un onglet ou un ecran separe si la
+presentation exige une separation stricte des roles.
+
 ## Choix de securite conserve
 
 La maquette proposait un choix de role pendant l'inscription. Dans l'application

@@ -1,0 +1,31 @@
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+
+# Flutter/Dart generated files
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/build/
+**/.pub-cache/
+**/.pub/
+**/coverage/
+
+# Mobile build outputs
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+
+# Local signing secrets
+**/android/key.properties
+**/*.jks
+**/*.keystore
+
+# Temporary analysis exports
+**/docs/source-analysis/
+.codex-tmp/
+docs/tutorial/rendered/
+docs/tutorial/pdf_rendered/

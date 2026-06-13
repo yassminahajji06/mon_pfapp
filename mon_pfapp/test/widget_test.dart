@@ -1,11 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:mon_pfapp/main.dart';
+import 'package:mon_pfapp/app/mon_pf_app.dart';
+
+Future<void> pumpMonPfApp(WidgetTester tester) async {
+  tester.view.physicalSize = const Size(390, 844);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+
+  await tester.pumpWidget(const MyApp());
+}
+
+Finder verticalScrollable() {
+  return find
+      .byWidgetPredicate(
+        (widget) =>
+            widget is Scrollable && widget.axisDirection == AxisDirection.down,
+      )
+      .first;
+}
 
 void main() {
   testWidgets('starts on the mockup-inspired login screen', (tester) async {
-    await tester.pumpWidget(const MyApp());
+    await pumpMonPfApp(tester);
 
     expect(find.text('Mon PF App'), findsOneWidget);
     expect(find.text('Se connecter'), findsWidgets);
@@ -14,7 +32,7 @@ void main() {
   });
 
   testWidgets('demo login opens the client home screen', (tester) async {
-    await tester.pumpWidget(const MyApp());
+    await pumpMonPfApp(tester);
 
     await tester.tap(find.widgetWithText(ElevatedButton, 'Se connecter'));
     await tester.pump(const Duration(milliseconds: 400));
@@ -25,9 +43,12 @@ void main() {
     expect(find.text('Plats populaires'), findsOneWidget);
   });
 
-  testWidgets('registration stays client-only and hides role selector', (tester) async {
-    await tester.pumpWidget(const MyApp());
+  testWidgets('registration stays client-only and hides role selector', (
+    tester,
+  ) async {
+    await pumpMonPfApp(tester);
 
+    await tester.ensureVisible(find.text('Creer un compte'));
     await tester.tap(find.text('Creer un compte'));
     await tester.pumpAndSettle();
 
@@ -38,7 +59,7 @@ void main() {
   });
 
   testWidgets('client can open menu, cart, and tracking flow', (tester) async {
-    await tester.pumpWidget(const MyApp());
+    await pumpMonPfApp(tester);
 
     await tester.tap(find.widgetWithText(ElevatedButton, 'Se connecter'));
     await tester.pump(const Duration(milliseconds: 400));
@@ -59,13 +80,17 @@ void main() {
   });
 
   testWidgets('demo spaces are reachable from home', (tester) async {
-    await tester.pumpWidget(const MyApp());
+    await pumpMonPfApp(tester);
 
     await tester.tap(find.widgetWithText(ElevatedButton, 'Se connecter'));
     await tester.pump(const Duration(milliseconds: 400));
     await tester.pump();
 
-    await tester.drag(find.byType(ListView), const Offset(0, -800));
+    await tester.scrollUntilVisible(
+      find.text('Livreur'),
+      260,
+      scrollable: verticalScrollable(),
+    );
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Livreur'));
@@ -75,7 +100,11 @@ void main() {
     await tester.tap(find.byTooltip('Retour'));
     await tester.pumpAndSettle();
 
-    await tester.drag(find.byType(ListView), const Offset(0, -800));
+    await tester.scrollUntilVisible(
+      find.text('Admin'),
+      260,
+      scrollable: verticalScrollable(),
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.text('Admin'));
     await tester.pumpAndSettle();

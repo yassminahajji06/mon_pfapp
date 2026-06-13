@@ -9,9 +9,10 @@ Ordre de lecture conseille :
 2. `auth_flow.md` pour comprendre comment les ecrans, l'API et le stockage se
    connectent.
 3. `fixes_applied.md` pour voir chaque correction et sa raison.
-4. `setup_and_release.md` pour lancer l'app et preparer un build.
-5. `app_walkthrough.md` pour tester le parcours complet.
-6. `testing_guide.md` pour comprendre les tests.
+4. `architecture.md` pour comprendre l'organisation du code.
+5. `setup_and_release.md` pour lancer l'app et preparer un build.
+6. `app_walkthrough.md` pour tester le parcours complet.
+7. `testing_guide.md` pour comprendre les tests.
 
 Les ecrans ont ete construits en Flutter a partir de la maquette fournie dans
 `French Restaurant App UI Mockup`.

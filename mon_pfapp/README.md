@@ -1,82 +1,90 @@
-# Mon PF App
+# Mon PF App - Flutter
 
-Application Flutter de restauration et livraison preparee pour le projet de fin
-d'annee de Yassmine Hajji dans la filiere developpement d'applications.
+Flutter application for Yassmine Hajji's final-year restaurant ordering and delivery project.
 
-## Objectif
+The app is demo-ready by default: login, menu, cart, tracking, profile, driver dashboard and admin dashboard can be tested without a backend. A Laravel/MySQL REST API can be connected later through `--dart-define`.
 
-L'application couvre maintenant un parcours complet de demonstration :
+## Run
 
-- connexion utilisateur ;
-- creation de compte client ;
-- stockage securise du jeton d'authentification ;
-- accueil client avec categories et plats populaires ;
-- menu filtrable ;
-- panier avec quantites et total ;
-- suivi de livraison ;
-- historique des commandes ;
-- profil utilisateur ;
-- tableau de bord livreur ;
-- tableau de bord administrateur ;
-- deconnexion.
-
-## Configuration rapide
-
-Installer les dependances :
-
-```bash
+```powershell
 flutter pub get
-```
-
-Lancer l'application avec l'URL de l'API :
-
-```bash
-flutter run --dart-define=API_BASE_URL=https://votre-domaine/api
-```
-
-Par defaut, `DEMO_MODE` vaut `true`. Cela permet de tester toute l'interface
-sans backend :
-
-```bash
 flutter run
 ```
 
-Pour brancher le vrai backend :
+Run on Chrome for visual testing:
 
-```bash
+```powershell
+flutter run -d chrome --web-port 57321
+```
+
+Run with a real API:
+
+```powershell
 flutter run --dart-define=DEMO_MODE=false --dart-define=API_BASE_URL=https://votre-domaine/api
 ```
 
-## Backend attendu
+## Verify
 
-L'app attend une API REST avec ces routes :
-
-- `POST /register`
-- `POST /login`
-- `POST /logout`
-
-Les reponses de connexion et d'inscription doivent retourner un `token` et un
-objet `user` contenant au minimum `id`, `nom`, `email` et `role`.
-
-## Documentation projet
-
-Les fichiers dans `docs/` expliquent les corrections appliquees et comment les
-presenter :
-
-- `docs/project_context.md`
-- `docs/auth_flow.md`
-- `docs/fixes_applied.md`
-- `docs/setup_and_release.md`
-- `docs/testing_guide.md`
-- `docs/app_walkthrough.md`
-- `docs/README.md`
-
-## Verification
-
-```bash
-flutter analyze
+```powershell
+dart analyze
 flutter test
+flutter build web --release --dart-define=DEMO_MODE=true
 ```
 
-Dans cet environnement Codex, Flutter n'etait pas disponible sur le PATH, donc
-ces commandes doivent etre executees sur la machine de developpement Flutter.
+Android:
+
+```powershell
+flutter build apk --debug
+flutter build apk --release
+adb install -r build/app/outputs/flutter-apk/app-release.apk
+```
+
+## Structure
+
+```text
+lib/
+├── app/                 # App shell, theme, navigation and shared state
+├── core/                # API config, secure storage, validators
+├── data/                # Demo data
+├── domain/models/       # User, menu item, cart item, order model
+├── features/
+│   ├── auth/            # Login/register + AuthService
+│   ├── client/          # Home, menu, cart, tracking, orders, profile
+│   └── operations/      # Driver and admin dashboards
+└── shared/widgets/      # Reusable UI components
+```
+
+## Backend Contract
+
+| Method | Endpoint | Notes |
+|---|---|---|
+| `POST` | `/register` | Public registration creates a `client` only |
+| `POST` | `/login` | Returns `token` and `user` |
+| `POST` | `/logout` | Uses `Authorization: Bearer <token>` |
+
+Expected auth response:
+
+```json
+{
+  "token": "server-token",
+  "user": {
+    "id": 1,
+    "nom": "Yassmine Hajji",
+    "email": "yassmine@monpf.fr",
+    "role": "client"
+  }
+}
+```
+
+## Release Notes
+
+- Android debug and signed release APK builds are working on this machine.
+- Windows release is blocked until Visual Studio Build Tools includes **C++ ATL for latest v142 build tools**.
+- Local signing files are intentionally ignored by Git: `android/key.properties`, `*.jks`, `*.keystore`.
+
+More details are in:
+
+- [Setup and release](docs/setup_and_release.md)
+- [Testing guide](docs/testing_guide.md)
+- [Architecture](docs/architecture.md)
+- [Full tutorial PDF](../docs/tutorial/Mon_PF_App_Tutorial_Yassmine_Hajji.pdf)
