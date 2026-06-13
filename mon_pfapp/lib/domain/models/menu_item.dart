@@ -19,6 +19,7 @@ class MenuItem {
   final String name;
   final String category;
   final String description;
+  final String imageAsset;
   final int price;
   final double rating;
   final String prepTime;
@@ -32,6 +33,7 @@ class MenuItem {
     required this.name,
     required this.category,
     required this.description,
+    required this.imageAsset,
     required this.price,
     required this.rating,
     required this.prepTime,

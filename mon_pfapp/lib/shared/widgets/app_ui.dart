@@ -209,21 +209,58 @@ class FoodVisual extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            item.color.withValues(alpha: 0.18),
-            item.color.withValues(alpha: 0.04),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(18),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(size >= 80 ? 18 : 16),
+      child: Stack(
+        children: [
+          SizedBox(
+            width: size,
+            height: size,
+            child: Image.asset(
+              item.imageAsset,
+              fit: BoxFit.cover,
+              frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                if (wasSynchronouslyLoaded) return child;
+                return AnimatedOpacity(
+                  opacity: frame == null ? 0 : 1,
+                  duration: const Duration(milliseconds: 260),
+                  curve: Curves.easeOut,
+                  child: child,
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        item.color.withValues(alpha: 0.18),
+                        item.color.withValues(alpha: 0.04),
+                      ],
+                    ),
+                  ),
+                  child: Icon(item.icon, color: item.color, size: size * 0.48),
+                );
+              },
+            ),
+          ),
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.12),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
-      child: Icon(item.icon, color: item.color, size: size * 0.48),
     );
   }
 }

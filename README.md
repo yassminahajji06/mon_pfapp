@@ -149,6 +149,8 @@ Public registration must create a `client` account only. Sensitive roles such as
 | [Tutorial PDF](docs/tutorial/Mon_PF_App_Tutorial_Yassmine_Hajji.pdf) | Full explanation with stack, architecture, screenshots, algorithms, tests and presentation notes |
 | [Editable tutorial DOCX](docs/tutorial/Mon_PF_App_Tutorial_Yassmine_Hajji.docx) | Source document for future edits |
 | [Requirements summary](docs/specifications/requirements-summary.md) | Extracted project context from the supplied PDFs |
+| [Validation checklist](docs/specifications/validation-checklist.md) | What is covered vs. what remains for full cahier de charge validation |
+| [Logo note](docs/design/logo.md) | Logo concept and generated app icon locations |
 | [Setup and release guide](mon_pfapp/docs/setup_and_release.md) | Android/Windows setup, build commands and blockers |
 | [Testing guide](mon_pfapp/docs/testing_guide.md) | How to verify app behavior |
 | [Architecture notes](mon_pfapp/docs/architecture.md) | Short technical architecture reference |

@@ -131,7 +131,7 @@ class _MonPfAppState extends State<MonPfApp> {
   Widget build(BuildContext context) {
     final user = _user ?? DemoData.demoUser;
 
-    return switch (_screen) {
+    final screen = switch (_screen) {
       'register' => RegisterScreen(
         onAuthenticated: _authenticate,
         onLoginTap: () => _navigate('login'),
@@ -170,5 +170,33 @@ class _MonPfAppState extends State<MonPfApp> {
         onRegisterTap: () => _navigate('register'),
       ),
     };
+
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 340),
+      reverseDuration: const Duration(milliseconds: 220),
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (child, animation) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+        );
+
+        return FadeTransition(
+          opacity: curved,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.035, 0.018),
+              end: Offset.zero,
+            ).animate(curved),
+            child: ScaleTransition(
+              scale: Tween<double>(begin: 0.985, end: 1).animate(curved),
+              child: child,
+            ),
+          ),
+        );
+      },
+      child: KeyedSubtree(key: ValueKey(_screen), child: screen),
+    );
   }
 }
