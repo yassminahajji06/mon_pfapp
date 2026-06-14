@@ -89,6 +89,14 @@ Windows:
 flutter run -d windows --dart-define=DEMO_MODE=false --dart-define=API_BASE_URL=http://127.0.0.1:8000/api
 ```
 
+Web Chrome:
+
+```powershell
+flutter run -d chrome --web-port=5600 --dart-define=DEMO_MODE=false --dart-define=API_BASE_URL=http://127.0.0.1:8000/api
+```
+
+Le backend inclut `config/cors.php` et `HandleCors` pour autoriser les appels Web locaux vers `api/*` pendant la demo.
+
 L'APK release garde une politique reseau stricte. Pour une vraie publication, utiliser une API HTTPS et construire avec:
 
 ```powershell

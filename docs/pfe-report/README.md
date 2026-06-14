@@ -2,6 +2,10 @@
 
 Ce dossier contient le rapport PFE de Yassmine Hajji pour le projet Mon PF App.
 
+La version LaTeX suit la structure académique extraite des deux rapports modèles fournis :
+présentation, contexte et spécification générale, modélisation UML, architecture technique,
+réalisation, conclusion et perspectives.
+
 ## Livrables
 
 | Fichier | Usage |

@@ -28,6 +28,15 @@ cd C:\Users\LOQ\Documents\yassmin pfe\mon_pfapp
 flutter run -d windows --dart-define=DEMO_MODE=false --dart-define=API_BASE_URL=http://127.0.0.1:8000/api
 ```
 
+Sur Web Chrome:
+
+```powershell
+cd C:\Users\LOQ\Documents\yassmin pfe\mon_pfapp
+flutter run -d chrome --web-port=5600 --dart-define=DEMO_MODE=false --dart-define=API_BASE_URL=http://127.0.0.1:8000/api
+```
+
+Le backend active CORS pour `api/*` afin que Flutter Web puisse appeler l'API locale pendant la demonstration.
+
 Sur telephone Android connecte au meme Wi-Fi:
 
 ```powershell
