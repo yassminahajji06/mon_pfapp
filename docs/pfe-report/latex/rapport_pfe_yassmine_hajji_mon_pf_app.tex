@@ -1,0 +1,579 @@
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{titlesec}
+
+\geometry{top=2.2cm,bottom=2.2cm,left=2.2cm,right=2.2cm}
+
+\definecolor{MonRed}{HTML}{E53935}
+\definecolor{MonBlue}{HTML}{2E74B5}
+\definecolor{MonNavy}{HTML}{1F4D78}
+\definecolor{MonText}{HTML}{1F2933}
+\definecolor{MonMuted}{HTML}{5D6877}
+\definecolor{MonLight}{HTML}{F3F4F6}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=MonBlue,
+  urlcolor=MonRed,
+  pdftitle={Rapport PFE - Mon PF App},
+  pdfauthor={HAJJI Yassmine}
+}
+
+\graphicspath{
+  {../assets/}
+  {../../tutorial/assets/source/}
+  {../../tutorial/assets/screenshots/}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\small Mon PF App}
+\rhead{\small HAJJI Yassmine -- BTS DAI}
+\cfoot{\small Rapport PFE -- \thepage}
+\setlength{\headheight}{14pt}
+
+\titleformat{\chapter}
+  {\normalfont\Huge\bfseries\color{MonBlue}}
+  {\thechapter}{1em}{}
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{MonNavy}}
+  {\thesection}{0.8em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{MonText}}
+  {\thesubsection}{0.6em}{}
+
+\setlist[itemize]{topsep=4pt,itemsep=3pt}
+\setlist[enumerate]{topsep=4pt,itemsep=3pt}
+\renewcommand{\arraystretch}{1.25}
+
+\lstdefinestyle{monpf}{
+  backgroundcolor=\color{black!92},
+  basicstyle=\ttfamily\small\color{white},
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{black!20},
+  xleftmargin=4pt,
+  xrightmargin=4pt
+}
+
+\newcommand{\field}[2]{\textbf{#1} & #2\\}
+
+\begin{document}
+
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+  \centering
+  {\small Royaume du Maroc\\}
+  {\small Ministère de l'Éducation Nationale, du Préscolaire et des Sports\\}
+  {\small Académie Régionale de l'Éducation et de la Formation Drâa-Tafilalet\\}
+  {\small Direction Provinciale de Ouarzazate\\[0.8cm]}
+
+  \includegraphics[width=3.2cm]{cover_image_1.png}\\[0.8cm]
+
+  {\Huge\bfseries Rapport de Projet de Fin d'Études\\[0.35cm]}
+  {\Large Deuxième année BTS\\}
+  {\Large Développement des Applications Informatiques\\[1.0cm]}
+
+  {\Large\bfseries\color{MonRed}
+  Conception et réalisation d'une application mobile de gestion des commandes d'un restaurant\\[0.6cm]}
+  {\Huge\bfseries Mon PF App\\[1.0cm]}
+
+  \begin{tabular}{>{\bfseries}p{4cm}p{9cm}}
+    Projet & Mon PF App\\
+    Réalisé par & HAJJI Yassmine\\
+    Établissement & Lycée Qualifiant Technique Ibn Al-Haitam\\
+    Formation & BTS Développement des Applications Informatiques\\
+    Encadrement & Encadrant pédagogique : à compléter\\
+    Année de formation & 2024 -- 2026\\
+  \end{tabular}
+
+  \vfill
+  {\large Version LaTeX -- \today}
+\end{titlepage}
+\hypersetup{pageanchor=true}
+
+\pagenumbering{roman}
+
+\chapter*{Remerciements}
+\addcontentsline{toc}{chapter}{Remerciements}
+Je tiens à remercier l'équipe pédagogique du BTS Développement des Applications Informatiques du Lycée Qualifiant Technique Ibn Al-Haitam pour l'encadrement, les connaissances techniques et la méthodologie acquises durant ma formation.
+
+Je remercie également toutes les personnes qui ont participé à la définition du besoin, aux tests, aux retours d'utilisation et à l'amélioration progressive de l'application \textbf{Mon PF App}.
+
+Ce projet m'a permis de rapprocher les acquis de programmation, base de données, analyse UML, sécurité, tests et documentation d'un besoin applicatif concret : la gestion des commandes d'un restaurant.
+
+\chapter*{Résumé}
+\addcontentsline{toc}{chapter}{Résumé}
+Ce rapport présente \textbf{Mon PF App}, une application mobile de gestion des commandes et des livraisons d'un restaurant. Le projet répond à la problématique de la gestion manuelle : erreurs de commande, retards de préparation, manque de suivi et communication insuffisante entre client, restaurant et livreur.
+
+La solution s'appuie sur \textbf{Flutter} pour l'application mobile et \textbf{Laravel} pour l'API backend. Le système permet au client de consulter le menu, gérer le panier, passer une commande et suivre son état. Il propose aussi des espaces dédiés à l'administrateur, au serveur et au livreur.
+
+La version livrée est une version \textbf{démo-prod} : elle dispose d'une interface aboutie, d'un backend local fonctionnel, d'une base SQLite seedée, de tests automatiques et d'une documentation permettant d'installer, tester, debugger et présenter le projet.
+
+\tableofcontents
+\clearpage
+\phantomsection
+\pagenumbering{arabic}
+
+\chapter{Introduction générale}
+Dans le cadre de la formation BTS Développement des Applications Informatiques, le projet de fin d'études doit démontrer la capacité à analyser un besoin, concevoir une solution, réaliser une application, tester son fonctionnement et documenter le travail effectué.
+
+\textbf{Mon PF App} est une application de gestion des commandes d'un restaurant. Elle montre un parcours client complet et des espaces opérationnels pour l'administration et la livraison.
+
+Le choix du sujet est pertinent pour un PFE car il mobilise plusieurs compétences :
+\begin{itemize}
+  \item analyse des acteurs et des besoins ;
+  \item modélisation des données ;
+  \item développement mobile Flutter ;
+  \item création d'une API REST Laravel ;
+  \item sécurité et gestion des rôles ;
+  \item tests et génération d'un APK Android ;
+  \item documentation technique et académique.
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Fiche signalétique du projet}
+\begin{tabular}{p{4cm}p{10cm}}
+\toprule
+\textbf{Élément} & \textbf{Description}\\
+\midrule
+\field{Sujet}{Application mobile de gestion des commandes d'un restaurant}
+\field{Projet}{Mon PF App}
+\field{Stagiaire}{HAJJI Yassmine}
+\field{Formation}{BTS Développement des Applications Informatiques}
+\field{Cibles}{Android et Windows}
+\bottomrule
+\end{tabular}
+\end{table}
+
+\chapter{Contexte et problématique}
+Les restaurants gèrent de plus en plus de commandes à emporter et en livraison. Lorsque les commandes sont prises manuellement, les erreurs de saisie, les oublis et les retards deviennent fréquents.
+
+Le client souhaite connaître l'état de sa commande. Le restaurant doit organiser les préparations. Le livreur doit savoir quelles commandes sont disponibles et lesquelles lui sont affectées.
+
+La problématique du projet est donc la suivante :
+\begin{quote}
+Comment digitaliser le processus de commande afin de réduire les erreurs humaines, accélérer le traitement et améliorer la communication entre les acteurs ?
+\end{quote}
+
+\begin{longtable}{p{4cm}p{5cm}p{5cm}}
+\caption{Problèmes identifiés et réponses du projet}\\
+\toprule
+\textbf{Problème} & \textbf{Conséquence} & \textbf{Réponse Mon PF App}\\
+\midrule
+Erreur de commande & Plat incorrect ou quantité fausse & Panier numérique et validation explicite\\
+Retard de préparation & Client insatisfait & Suivi par statut\\
+Mauvaise communication & Livreur ou restaurant mal informé & Espaces dédiés par acteur\\
+Menu difficile à maintenir & Prix ou disponibilité non à jour & Catalogue API et endpoints de gestion menu\\
+\bottomrule
+\end{longtable}
+
+\chapter{Objectifs du projet}
+L'objectif général est de réaliser une application mobile de gestion des commandes d'un restaurant. Elle doit organiser le processus depuis le choix des plats jusqu'à la livraison.
+
+Les objectifs spécifiques sont :
+\begin{itemize}
+  \item permettre aux clients de consulter le menu ;
+  \item ajouter des plats au panier ;
+  \item calculer automatiquement le montant total ;
+  \item passer une commande ;
+  \item suivre l'état de la commande ;
+  \item permettre au livreur de consulter et accepter les livraisons ;
+  \item permettre à l'administrateur de consulter les statistiques et les commandes ;
+  \item structurer le projet de manière professionnelle pour faciliter la maintenance.
+\end{itemize}
+
+Sur le plan technique, le projet doit être testable et démontrable. Le repository a donc été organisé avec un frontend Flutter, un backend Laravel, des documents de spécification, des guides et des scripts.
+
+\chapter{Cahier des charges}
+Le cahier de charge fourni indique les besoins fonctionnels côté client, restaurant et livreur. Il indique aussi les besoins non fonctionnels : sécurité, simplicité, rapidité, fiabilité et maintenance.
+
+\section{Besoins fonctionnels}
+\begin{longtable}{p{4cm}p{10cm}}
+\caption{Besoins fonctionnels par acteur}\\
+\toprule
+\textbf{Acteur} & \textbf{Fonctionnalités attendues}\\
+\midrule
+Client & Créer un compte, se connecter, consulter le menu, ajouter des plats au panier, passer une commande, suivre l'état de la commande.\\
+Administrateur / restaurant & Gérer les utilisateurs, gérer le menu, recevoir les commandes, mettre à jour l'état des commandes, affecter un livreur, consulter les statistiques.\\
+Serveur & Traiter les commandes sur place et participer au flux opérationnel du restaurant.\\
+Livreur & Se connecter, consulter les commandes à livrer, accepter une livraison, mettre à jour l'état de livraison, consulter l'historique.\\
+\bottomrule
+\end{longtable}
+
+\section{Besoins non fonctionnels}
+\begin{itemize}
+  \item sécurité des données et authentification ;
+  \item interface mobile simple et intuitive ;
+  \item rapidité de traitement des commandes ;
+  \item fiabilité et synchronisation des états ;
+  \item facilité de maintenance.
+\end{itemize}
+
+\section{Couverture actuelle}
+La version actuelle couvre le coeur du cahier de charge pour une démonstration PFE :
+\begin{itemize}
+  \item le client peut se connecter, consulter le menu, gérer son panier, passer une commande et suivre son statut ;
+  \item l'administrateur dispose d'une vision statistiques et commandes ;
+  \item le livreur peut consulter la file et accepter une livraison ;
+  \item le backend Laravel fournit les données persistantes locales.
+\end{itemize}
+
+\chapter{Analyse des acteurs}
+Le système est conçu autour de quatre acteurs principaux.
+
+\begin{table}[H]
+\centering
+\caption{Acteurs du système}
+\begin{tabular}{p{4cm}p{10cm}}
+\toprule
+\textbf{Acteur} & \textbf{Responsabilités}\\
+\midrule
+Client & Consulter le menu, gérer le panier, commander et suivre la livraison.\\
+Administrateur & Superviser les commandes, consulter les statistiques, gérer le menu et les affectations.\\
+Serveur & Intervenir dans le traitement opérationnel des commandes du restaurant.\\
+Livreur & Voir les commandes à livrer, accepter une livraison et mettre à jour son état.\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Cette séparation permet de contrôler les accès. Un client ne doit pas pouvoir se créer un compte administrateur ou livreur. Les rôles sensibles sont donc imposés côté serveur.
+
+\chapter{Analyse fonctionnelle}
+L'analyse fonctionnelle décompose le système en cas d'utilisation. Chaque cas d'utilisation correspond à une action visible dans l'application ou dans l'API.
+
+Le parcours principal est le passage de commande :
+\begin{enumerate}
+  \item le client se connecte ;
+  \item il consulte le menu ;
+  \item il ajoute des plats au panier ;
+  \item il valide le panier ;
+  \item l'API crée une commande ;
+  \item le restaurant et le livreur peuvent traiter cette commande ;
+  \item le client suit son état.
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{order_cycle.png}
+  \caption{Cycle de commande dans Mon PF App}
+\end{figure}
+
+\chapter{Conception des données}
+Le modèle de données s'organise autour des utilisateurs, catégories, plats, commandes et lignes de commande. Cette structure évite de stocker une commande comme simple texte et permet de garder l'historique des prix et quantités.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{data_model_backend.png}
+  \caption{Modèle logique simplifié du backend}
+\end{figure}
+
+\begin{longtable}{p{4cm}p{10cm}}
+\caption{Entités principales}\\
+\toprule
+\textbf{Entité} & \textbf{Rôle}\\
+\midrule
+User & Stocke les informations utilisateur, le rôle et le hash du token.\\
+Category & Organise les plats par familles.\\
+MenuItem & Représente un plat avec son prix, sa catégorie, son image et sa disponibilité.\\
+Order & Représente une commande client avec statut, adresse, total et livreur affecté.\\
+OrderItem & Stocke les lignes de commande afin de conserver le prix et la quantité commandés.\\
+\bottomrule
+\end{longtable}
+
+\chapter{Architecture technique}
+L'architecture sépare clairement le frontend et le backend. Flutter gère l'interface, l'état utilisateur et le panier. Laravel gère les validations, les routes REST et la persistance.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{architecture_demo_prod.png}
+  \caption{Architecture démo-prod Flutter + Laravel}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Choix techniques}
+\begin{tabular}{p{3.2cm}p{4.8cm}p{5.5cm}}
+\toprule
+\textbf{Couche} & \textbf{Technologie} & \textbf{Justification}\\
+\midrule
+Frontend & Flutter / Dart & Un seul code pour Android, Windows et le web de test.\\
+Backend & Laravel 13 & Framework structuré avec routes REST, validations et tests.\\
+Base de données & SQLite en démo & Démarrage rapide sans installer de serveur MySQL.\\
+Sécurité locale & \texttt{flutter\_secure\_storage} & Conservation plus sûre du token côté mobile.\\
+Tests & PHPUnit et \texttt{flutter\_test} & Vérification automatique des flux principaux.\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Le mode démonstration reste disponible pour garantir une soutenance fluide même si le serveur n'est pas accessible. Le mode backend réel s'active avec les variables \texttt{DEMO\_MODE=false} et \texttt{API\_BASE\_URL}.
+
+\chapter{Réalisation backend Laravel}
+Le backend se trouve dans le dossier \texttt{mon\_pfapi}. Il expose des endpoints REST publics et protégés.
+
+\section{Routes principales}
+\begin{longtable}{p{3cm}p{6cm}p{5cm}}
+\caption{Endpoints API}\\
+\toprule
+\textbf{Méthode} & \textbf{Endpoint} & \textbf{Rôle}\\
+\midrule
+GET & /api/health & public\\
+GET & /api/menu & public\\
+POST & /api/register & public\\
+POST & /api/login & public\\
+POST & /api/logout & connecté\\
+GET & /api/orders & connecté\\
+POST & /api/orders & client\\
+GET & /api/admin/stats & admin / serveur\\
+GET & /api/driver/orders & livreur / admin\\
+\bottomrule
+\end{longtable}
+
+\section{Composants backend}
+\begin{itemize}
+  \item \texttt{AuthController} : inscription, connexion, déconnexion et émission du token ;
+  \item \texttt{MenuController} : catalogue public et endpoints de gestion menu ;
+  \item \texttt{OrderController} : création commande, historique, statuts, file livreur et statistiques ;
+  \item \texttt{TokenAuth} : middleware Bearer token et contrôle des rôles ;
+  \item \texttt{DatabaseSeeder} : comptes de test, restaurant, catégories, menu et commande initiale.
+\end{itemize}
+
+\chapter{Réalisation Flutter}
+L'application Flutter se trouve dans \texttt{mon\_pfapp}. Elle contient les écrans pour l'authentification, l'accueil client, le menu, le panier, le suivi, le profil, l'administration et la livraison.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{contact-sheet.png}
+  \caption{Aperçu des écrans principaux de l'application}
+\end{figure}
+
+\begin{longtable}{p{6cm}p{8cm}}
+\caption{Fichiers Flutter importants}\\
+\toprule
+\textbf{Fichier} & \textbf{Rôle}\\
+\midrule
+\nolinkurl{lib/app/mon_pf_app.dart} & État global, navigation, panier, chargement menu et commandes.\\
+\nolinkurl{lib/data/api_client.dart} & Client HTTP avec headers, token, timeout et gestion d'erreurs.\\
+\nolinkurl{features/client/data/order_service.dart} & Création et récupération des commandes.\\
+\nolinkurl{features/auth/data/auth_service.dart} & Connexion, inscription et déconnexion.\\
+\nolinkurl{shared/widgets/app_ui.dart} & Couleurs, cartes, navigation et visuels de plats.\\
+\bottomrule
+\end{longtable}
+
+L'interface utilise des images de plats, un logo personnalisé et des transitions animées afin d'obtenir un rendu proche d'un produit final.
+
+\chapter{Sécurité}
+La sécurité a été renforcée à plusieurs niveaux.
+
+\begin{itemize}
+  \item la sélection de rôle a été retirée de l'inscription publique ;
+  \item le backend force toujours le rôle \texttt{client} lors d'une inscription ;
+  \item le token est stocké dans \texttt{flutter\_secure\_storage} côté application ;
+  \item l'API ne stocke que le hash SHA-256 du token ;
+  \item les appels API possèdent un timeout ;
+  \item Android release refuse HTTP local et doit utiliser HTTPS.
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Risques et réponses de sécurité}
+\begin{tabular}{p{5cm}p{9cm}}
+\toprule
+\textbf{Risque} & \textbf{Solution}\\
+\midrule
+Auto-création admin & Rôle client forcé côté serveur\\
+Token exposé localement & Secure storage côté app\\
+Token brut en base & Stockage du hash uniquement\\
+Serveur indisponible & Timeout et messages d'erreur\\
+HTTP en release & Refus du cleartext sauf debug/profile\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\chapter{Algorithmes et règles métier}
+Le projet repose sur des algorithmes applicatifs simples et défendables.
+
+\section{Gestion du panier}
+Lorsqu'un utilisateur ajoute un plat au panier, l'application recherche si ce plat existe déjà dans la liste. S'il existe, la quantité augmente. Sinon, une nouvelle ligne \texttt{CartItem} est créée.
+
+\section{Calcul du total}
+Chaque ligne calcule son total par :
+\[
+  total\_ligne = prix\_unitaire \times quantite
+\]
+Le total de la commande est ensuite calculé par :
+\[
+  total = sous\_total + frais\_livraison
+\]
+
+\section{Règles de commande}
+\begin{itemize}
+  \item une commande ne peut pas être créée sans plats ;
+  \item les quantités doivent rester positives ;
+  \item le statut est normalisé par le backend ;
+  \item les rôles déterminent les actions autorisées.
+\end{itemize}
+
+\chapter{Interface et expérience utilisateur}
+L'interface a été inspirée par la maquette restaurant fournie. Elle privilégie une présentation mobile claire : header rouge, cartes blanches, navigation basse, visuels de plats et boutons d'action visibles.
+
+L'objectif UI/UX est de permettre au client de comprendre rapidement le parcours :
+\begin{enumerate}
+  \item se connecter ;
+  \item consulter le menu ;
+  \item ajouter des plats ;
+  \item valider le panier ;
+  \item suivre la commande ;
+  \item consulter l'historique.
+\end{enumerate}
+
+Les espaces admin et livreur utilisent des cartes de statistiques et des listes de commandes afin de rester lisibles sur téléphone.
+
+\chapter{Tests et validation}
+Les tests automatiques prouvent que l'application n'est pas seulement une maquette. Flutter teste les écrans critiques et Laravel teste les flux API.
+
+\begin{longtable}{p{5cm}p{9cm}}
+\caption{Résultats de validation}\\
+\toprule
+\textbf{Contrôle} & \textbf{Résultat}\\
+\midrule
+Dart analyze & No issues found\\
+Flutter tests & 5 tests passed\\
+Laravel tests & 5 tests passed\\
+Flux API live & Login client et commande créée\\
+Android debug APK & Build généré\\
+Windows & Bloqué par composant ATL manquant\\
+\bottomrule
+\end{longtable}
+
+\chapter{Installation et mise en service locale}
+\section{Lancer le backend}
+\begin{lstlisting}[style=monpf]
+cd "C:\Users\LOQ\Documents\yassmin pfe\mon_pfapi"
+..\tools\runtime\php-8.4.22\php.exe artisan migrate:fresh --seed
+..\tools\runtime\php-8.4.22\php.exe artisan serve --host=0.0.0.0 --port=8000
+\end{lstlisting}
+
+\section{Lancer Flutter avec l'API locale}
+\begin{lstlisting}[style=monpf]
+cd "C:\Users\LOQ\Documents\yassmin pfe\mon_pfapp"
+C:\Users\LOQ\dev\flutter\bin\flutter.bat run --dart-define=DEMO_MODE=false --dart-define=API_BASE_URL=http://127.0.0.1:8000/api
+\end{lstlisting}
+
+Pour un téléphone Android sur le même Wi-Fi, il faut remplacer \texttt{127.0.0.1} par l'adresse IPv4 Wi-Fi du PC.
+
+\chapter{Android et Windows}
+Android est la cible la plus avancée. L'APK debug existe et peut être installé avec ADB lorsque le téléphone est connecté et autorisé.
+
+\begin{lstlisting}[style=monpf]
+C:\Users\LOQ\AppData\Local\Android\Sdk\platform-tools\adb.exe devices
+C:\Users\LOQ\AppData\Local\Android\Sdk\platform-tools\adb.exe install -r build\app\outputs\flutter-apk\app-debug.apk
+\end{lstlisting}
+
+Windows est une cible prioritaire, mais le build nécessite l'installation du composant Visual Studio ATL. L'erreur observée est :
+
+\begin{lstlisting}[style=monpf]
+fatal error C1083: Impossible d'ouvrir le fichier include : 'atlstr.h'
+\end{lstlisting}
+
+La solution est d'ouvrir Visual Studio Installer et d'installer le composant \textbf{C++ ATL for latest v143/v14x build tools} ou l'équivalent disponible.
+
+\chapter{Difficultés rencontrées}
+\begin{longtable}{p{5cm}p{9cm}}
+\caption{Difficultés et solutions}\\
+\toprule
+\textbf{Difficulté} & \textbf{Solution}\\
+\midrule
+Chocolatey bloqué par permissions & Installation portable PHP/Composer dans \texttt{tools/runtime}.\\
+\texttt{dart.bat} lent ou bloqué & Utilisation de \texttt{dart.exe} direct du SDK Flutter.\\
+HTTP local Android & Autorisation uniquement en debug/profile avec \texttt{tools:replace}.\\
+ADB non trouvé dans PATH & Utilisation du chemin complet \texttt{platform-tools/adb.exe}.\\
+Build Windows bloqué & Installation du composant Visual Studio ATL.\\
+\bottomrule
+\end{longtable}
+
+\chapter{Validation du cahier de charge}
+\begin{longtable}{p{6cm}p{8cm}}
+\caption{Validation des exigences}\\
+\toprule
+\textbf{Exigence} & \textbf{État}\\
+\midrule
+Client menu / panier / commande & Validé\\
+Suivi de commande & Validé visuellement et par statut\\
+Admin statistiques & Validé\\
+Livreur file / acceptation & Validé\\
+CRUD menu & Endpoints API disponibles ; UI admin à compléter\\
+Synchronisation temps réel & Perspective d'amélioration\\
+Déploiement HTTPS & Perspective d'amélioration\\
+\bottomrule
+\end{longtable}
+
+\chapter{Perspectives}
+Les perspectives principales concernent la production réelle :
+\begin{itemize}
+  \item héberger l'API sur un domaine HTTPS ;
+  \item remplacer SQLite par MySQL ou PostgreSQL hébergé ;
+  \item utiliser Laravel Sanctum pour une authentification plus standard ;
+  \item ajouter des notifications push ;
+  \item ajouter le paiement en ligne si le cahier de charge l'exige ;
+  \item compléter l'interface admin de CRUD menu ;
+  \item mettre en place une chaîne CI/CD GitHub Actions.
+\end{itemize}
+
+\chapter{Conclusion}
+\textbf{Mon PF App} constitue une base solide de projet de fin d'études BTS. Le projet montre la capacité à comprendre un besoin, concevoir une architecture, développer une application, ajouter un backend, sécuriser les rôles et tester les flux.
+
+La version démo-prod est suffisante pour une présentation claire : elle possède un parcours client, un espace admin, un espace livreur, une API Laravel, une base SQLite, un APK Android et une documentation détaillée.
+
+Le travail restant est bien identifié et peut être présenté comme perspectives de production. Cette transparence renforce la crédibilité du projet.
+
+\appendix
+\chapter{Comptes de démonstration}
+\begin{table}[H]
+\centering
+\caption{Comptes seedés}
+\begin{tabular}{p{6cm}p{4cm}p{4cm}}
+\toprule
+\textbf{Email} & \textbf{Rôle} & \textbf{Mot de passe}\\
+\midrule
+yassmine@monpf.fr & client & password\\
+admin@monpf.fr & admin & password\\
+serveur@monpf.fr & serveur & password\\
+livreur@monpf.fr & livreur & password\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\chapter{Fichiers importants}
+\begin{longtable}{p{7cm}p{7cm}}
+\caption{Fichiers à connaître}\\
+\toprule
+\textbf{Fichier} & \textbf{Rôle}\\
+\midrule
+\nolinkurl{mon_pfapp/lib/app/mon_pf_app.dart} & État global et navigation\\
+\nolinkurl{mon_pfapp/lib/data/api_client.dart} & Client HTTP\\
+\nolinkurl{mon_pfapi/routes/api.php} & Routes REST\\
+\nolinkurl{mon_pfapi/database/seeders/DatabaseSeeder.php} & Données de démonstration\\
+\nolinkurl{docs/demo-prod-runbook.md} & Guide de lancement\\
+\nolinkurl{docs/backend-api.md} & Documentation backend\\
+\bottomrule
+\end{longtable}
+
+\end{document}

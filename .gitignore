@@ -31,6 +31,12 @@ docs/tutorial/rendered/
 docs/tutorial/pdf_rendered/
 docs/tutorial/pdf_preview/
 docs/pfe-report/pdf_preview/
+docs/pfe-report/latex/*.aux
+docs/pfe-report/latex/*.log
+docs/pfe-report/latex/*.out
+docs/pfe-report/latex/*.toc
+docs/pfe-report/latex/*.fls
+docs/pfe-report/latex/*.fdb_latexmk
 
 # Local portable runtime used by Codex/dev machines
 tools/runtime/

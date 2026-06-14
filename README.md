@@ -9,6 +9,8 @@
 </p>
 
 <p align="center">
+  <a href="docs/pfe-report/latex/rapport_pfe_yassmine_hajji_mon_pf_app.pdf"><strong>Rapport PFE LaTeX</strong></a>
+  ·
   <a href="docs/tutorial/Mon_PF_App_Tutorial_Yassmine_Hajji.pdf"><strong>Lire le tutoriel PDF</strong></a>
   ·
   <a href="docs/demo-prod-runbook.md"><strong>Lancer la demo-prod</strong></a>
@@ -67,6 +69,7 @@ The app can run offline in demo mode or against the real Laravel API with `DEMO_
 .
 ├── docs/
 │   ├── design/             # UI mockup reference and attribution
+│   ├── pfe-report/         # PFE report PDF/DOCX/LaTeX source
 │   ├── specifications/     # Cahier de charge + analyse/conception
 │   └── tutorial/           # PDF/DOCX guide, diagrams, screenshots
 ├── mon_pfapp/              # Flutter application
@@ -147,6 +150,8 @@ See [Backend API](docs/backend-api.md) for endpoints, roles and accounts.
 |---|---|
 | [Tutorial PDF](docs/tutorial/Mon_PF_App_Tutorial_Yassmine_Hajji.pdf) | Full explanation with stack, architecture, screenshots, algorithms, tests and presentation notes |
 | [Editable tutorial DOCX](docs/tutorial/Mon_PF_App_Tutorial_Yassmine_Hajji.docx) | Source document for future edits |
+| [PFE report LaTeX PDF](docs/pfe-report/latex/rapport_pfe_yassmine_hajji_mon_pf_app.pdf) | Academic BTS report compiled from LaTeX |
+| [PFE report LaTeX source](docs/pfe-report/latex/rapport_pfe_yassmine_hajji_mon_pf_app.tex) | Official editable source for the PFE report |
 | [PFE report PDF](docs/pfe-report/Rapport_PFE_Yassmine_Hajji_Mon_PF_App.pdf) | Academic BTS-style final project report |
 | [Editable PFE report DOCX](docs/pfe-report/Rapport_PFE_Yassmine_Hajji_Mon_PF_App.docx) | Editable source report |
 | [Requirements summary](docs/specifications/requirements-summary.md) | Extracted project context from the supplied PDFs |
