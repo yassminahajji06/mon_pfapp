@@ -817,9 +817,11 @@ C:\Users\LOQ\dev\flutter\bin\flutter.bat run -d chrome --dart-define=DEMO_MODE=t
             <div class="row-actions">
               <button class="button green" id="askBtn">Analyser</button>
               <button class="button secondary" id="offlineBtn">Reponse locale</button>
+              <button class="button secondary" id="saveKeyBtn">Enregistrer la cle</button>
+              <button class="button secondary" id="forgetKeyBtn">Oublier la cle</button>
               <button class="button secondary" id="clearBtn">Effacer</button>
             </div>
-            <p class="hint">La cle n'est pas enregistree dans le repo. Elle reste dans ce navigateur pendant la session.</p>
+            <p class="hint">La cle n'est jamais enregistree dans le repo. Le bouton "Enregistrer la cle" la garde uniquement dans ce navigateur, sur cette machine.</p>
             <div class="status" id="status"></div>
           </div>
           <div>
@@ -1050,6 +1052,32 @@ Le telephone doit apparaitre avec un identifiant et le statut device.`
       $("#status").textContent = text;
     }
 
+    const GEMINI_KEY_STORAGE = "mon_pf_app_gemini_api_key";
+
+    function loadSavedKey() {
+      const savedKey = localStorage.getItem(GEMINI_KEY_STORAGE);
+      if (savedKey) {
+        $("#apiKey").value = savedKey;
+        setStatus("Cle Gemini chargee depuis ce navigateur.");
+      }
+    }
+
+    function saveKeyLocally() {
+      const key = $("#apiKey").value.trim();
+      if (!key) {
+        setStatus("Aucune cle a enregistrer.");
+        return;
+      }
+      localStorage.setItem(GEMINI_KEY_STORAGE, key);
+      setStatus("Cle Gemini enregistree uniquement sur cette machine.");
+    }
+
+    function forgetSavedKey() {
+      localStorage.removeItem(GEMINI_KEY_STORAGE);
+      $("#apiKey").value = "";
+      setStatus("Cle Gemini supprimee de ce navigateur.");
+    }
+
     function offlineAnswer() {
       const raw = [$("#question").value, $("#errorLog").value, $("#target").value].join(" ").toLowerCase();
       const recipe = recipes.find(item => item.keys.some(key => raw.includes(key.toLowerCase())));
@@ -1160,6 +1188,8 @@ Donne une solution executable sur Windows avec les commandes exactes du projet.`
 
     $("#askBtn").addEventListener("click", askGemini);
     $("#offlineBtn").addEventListener("click", offlineAnswer);
+    $("#saveKeyBtn").addEventListener("click", saveKeyLocally);
+    $("#forgetKeyBtn").addEventListener("click", forgetSavedKey);
     $("#clearBtn").addEventListener("click", () => {
       $("#question").value = "";
       $("#errorLog").value = "";
@@ -1170,6 +1200,8 @@ Donne une solution executable sur Windows avec les commandes exactes du projet.`
     $("#mobileJump").addEventListener("change", event => {
       location.hash = event.target.value;
     });
+
+    loadSavedKey();
   </script>
 </body>
 </html>

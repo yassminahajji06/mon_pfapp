@@ -172,3 +172,7 @@ See [Backend API](docs/backend-api.md) for endpoints, roles and accounts.
 Android is the strongest target today: the SDK is installed, Flutter doctor passes, and the APK builds. Windows needs the Visual Studio component **C++ ATL for latest v142 build tools** because `flutter_secure_storage_windows` requires `atlstr.h`.
 
 For a true production launch, the next technical steps are HTTPS hosting, a hosted MySQL/PostgreSQL database, Laravel Sanctum, delivery status synchronization, notification strategy, and CI/CD builds.
+
+## Repository Policy
+
+All project source files, documentation, reports, assets, Android Gradle wrapper files and launch guides are tracked in Git. The ignored files are intentionally limited to local caches, generated build outputs, local `.env` files, signing keys, runtime downloads and temporary previews. Do not commit API keys, keystores or generated build folders.
