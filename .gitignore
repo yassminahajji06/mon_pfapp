@@ -29,6 +29,8 @@ Thumbs.db
 .codex-tmp/
 docs/tutorial/rendered/
 docs/tutorial/pdf_rendered/
+docs/tutorial/pdf_preview/
+docs/pfe-report/pdf_preview/
 
 # Local portable runtime used by Codex/dev machines
 tools/runtime/

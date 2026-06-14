@@ -147,6 +147,8 @@ See [Backend API](docs/backend-api.md) for endpoints, roles and accounts.
 |---|---|
 | [Tutorial PDF](docs/tutorial/Mon_PF_App_Tutorial_Yassmine_Hajji.pdf) | Full explanation with stack, architecture, screenshots, algorithms, tests and presentation notes |
 | [Editable tutorial DOCX](docs/tutorial/Mon_PF_App_Tutorial_Yassmine_Hajji.docx) | Source document for future edits |
+| [PFE report PDF](docs/pfe-report/Rapport_PFE_Yassmine_Hajji_Mon_PF_App.pdf) | Academic BTS-style final project report |
+| [Editable PFE report DOCX](docs/pfe-report/Rapport_PFE_Yassmine_Hajji_Mon_PF_App.docx) | Editable source report |
 | [Requirements summary](docs/specifications/requirements-summary.md) | Extracted project context from the supplied PDFs |
 | [Validation checklist](docs/specifications/validation-checklist.md) | What is covered vs. what remains for full cahier de charge validation |
 | [Backend API](docs/backend-api.md) | Laravel structure, endpoints, roles, tests and launch commands |

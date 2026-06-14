@@ -17,10 +17,12 @@ From the repository root:
 
 ```powershell
 node tools/capture_app_screenshots.js
-python tools/build_tutorial_pdf.py
+C:\Users\LOQ\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe tools\build_pfe_documents.py
 ```
 
 The screenshot script expects the web release to be available at `http://localhost:57321`.
+
+`tools/build_pfe_documents.py` regenere aussi le rapport PFE dans `docs/pfe-report/`.
 
 ## QA Note
 
