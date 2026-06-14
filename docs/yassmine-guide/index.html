@@ -424,16 +424,17 @@
 
     .answer {
       min-height: 430px;
-      border: 1px solid var(--line);
+      border: 1px solid #cfd9e8;
       border-radius: 8px;
-      background: #0f172a;
-      color: #eaf2ff;
-      padding: 16px;
+      background: #ffffff;
+      color: var(--ink);
+      padding: 18px;
       white-space: pre-wrap;
       overflow: auto;
-      font-family: "Cascadia Mono", Consolas, monospace;
-      font-size: 13px;
-      line-height: 1.55;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+      box-shadow: inset 4px 0 0 var(--blue);
     }
 
     .hint {
@@ -935,12 +936,24 @@ Commandes Flutter:
 cd "C:\\Users\\LOQ\\Documents\\yassmin pfe\\mon_pfapp"
 C:\\Users\\LOQ\\dev\\flutter\\bin\\flutter.bat run -d windows --dart-define=DEMO_MODE=false --dart-define=API_BASE_URL=http://127.0.0.1:8000/api
 Comptes: yassmine@monpf.fr, admin@monpf.fr, serveur@monpf.fr, livreur@monpf.fr avec password.
-Reponds en francais simple. Structure toujours:
-1. Ce que l'erreur veut dire.
-2. Pourquoi elle arrive dans ce projet.
-3. Solution pas a pas.
-4. Commandes exactes.
-5. Verification finale.
+Reponds en francais simple et en texte structure uniquement.
+Interdictions strictes: pas de Markdown, pas de blocs de code, pas de triple backticks, pas de tableau Markdown, pas de JSON, pas de HTML.
+N'utilise pas de syntaxe de documentation technique comme ###, **gras**, - puces Markdown, ou listes de code.
+Utilise toujours cette structure textuelle:
+DIAGNOSTIC
+Explique en 2 ou 3 phrases ce que l'erreur veut dire.
+
+CAUSE PROBABLE DANS CE PROJET
+Explique pourquoi cela arrive dans Mon PF App.
+
+SOLUTION PAS A PAS
+Ecris des etapes courtes numerotees en phrases simples.
+
+COMMANDES A EXECUTER
+Ecris chaque commande sur une ligne separee avec le prefixe "Commande 1 :", "Commande 2 :", etc. Ne mets jamais les commandes dans un bloc de code.
+
+VERIFICATION FINALE
+Explique ce que Yassmine doit voir si c'est corrige.
 N'invente pas de chemins si tu n'es pas sur; utilise ceux du contexte.
 `;
 
@@ -948,13 +961,13 @@ N'invente pas de chemins si tu n'es pas sur; utilise ceux du contexte.
       {
         keys: ["atlstr.h", "ATL", "C1083"],
         title: "Windows build: atlstr.h introuvable",
-        answer: String.raw`Ce que cela veut dire
+        answer: String.raw`DIAGNOSTIC
 Le compilateur Windows cherche un header ATL de Visual Studio et ne le trouve pas.
 
-Pourquoi ici
+CAUSE PROBABLE DANS CE PROJET
 Le plugin flutter_secure_storage_windows depend d'un composant C++ de Visual Studio.
 
-Solution pas a pas
+SOLUTION PAS A PAS
 1. Ouvrir Visual Studio Installer.
 2. Cliquer sur Modifier pour Visual Studio Community.
 3. Aller dans Composants individuels.
@@ -962,80 +975,80 @@ Solution pas a pas
 5. Installer C++ ATL for latest v143/v14x build tools.
 6. Redemarrer PowerShell.
 
-Commandes
-cd "C:\\Users\\LOQ\\Documents\\yassmin pfe\\mon_pfapp"
-C:\\Users\\LOQ\\dev\\flutter\\bin\\flutter.bat run -d windows --dart-define=DEMO_MODE=false --dart-define=API_BASE_URL=http://127.0.0.1:8000/api
+COMMANDES A EXECUTER
+Commande 1 : cd "C:\\Users\\LOQ\\Documents\\yassmin pfe\\mon_pfapp"
+Commande 2 : C:\\Users\\LOQ\\dev\\flutter\\bin\\flutter.bat run -d windows --dart-define=DEMO_MODE=false --dart-define=API_BASE_URL=http://127.0.0.1:8000/api
 
-Verification
+VERIFICATION FINALE
 La fenetre Windows de Mon PF App doit s'ouvrir et le menu doit se charger.`
       },
       {
         keys: ["connection refused", "NetworkException", "SocketException", "failed host lookup", "timed out"],
         title: "Flutter ne peut pas joindre Laravel",
-        answer: String.raw`Ce que cela veut dire
+        answer: String.raw`DIAGNOSTIC
 Flutter essaye d'appeler l'API mais ne trouve pas le serveur.
 
-Pourquoi ici
+CAUSE PROBABLE DANS CE PROJET
 Le backend n'est peut-etre pas lance, ou l'URL API_BASE_URL n'est pas adaptee a la cible.
 
-Solution pas a pas
+SOLUTION PAS A PAS
 1. Lance Laravel dans une fenetre PowerShell separee.
 2. Teste /api/health.
-3. Choisis la bonne URL:
-- Windows/Web: http://127.0.0.1:8000/api
-- Android emulateur: http://10.0.2.2:8000/api
-- Telephone Android: http://ADRESSE_IP_PC:8000/api
+3. Pour Windows ou Web, utilise http://127.0.0.1:8000/api.
+4. Pour un emulateur Android, utilise http://10.0.2.2:8000/api.
+5. Pour un telephone Android reel, utilise http://ADRESSE_IP_PC:8000/api.
 
-Commandes backend
-cd "C:\\Users\\LOQ\\Documents\\yassmin pfe\\mon_pfapi"
-..\\tools\\runtime\\php-8.4.22\\php.exe artisan serve --host=0.0.0.0 --port=8000
+COMMANDES A EXECUTER
+Commande 1 : cd "C:\\Users\\LOQ\\Documents\\yassmin pfe\\mon_pfapi"
+Commande 2 : ..\\tools\\runtime\\php-8.4.22\\php.exe artisan serve --host=0.0.0.0 --port=8000
+Commande 3 : Invoke-RestMethod http://127.0.0.1:8000/api/health
 
-Verification
-Invoke-RestMethod http://127.0.0.1:8000/api/health`
+VERIFICATION FINALE
+La commande de verification doit afficher status: ok.`
       },
       {
         keys: ["cors", "Access-Control-Allow-Origin", "blocked by CORS"],
         title: "Web: erreur CORS",
-        answer: String.raw`Ce que cela veut dire
+        answer: String.raw`DIAGNOSTIC
 Chrome bloque une requete vers l'API car la reponse Laravel n'autorise pas l'origine web.
 
-Pourquoi ici
+CAUSE PROBABLE DANS CE PROJET
 Flutter Web tourne dans Chrome sur un port local et appelle Laravel sur un autre port.
 
-Solution pas a pas
+SOLUTION PAS A PAS
 1. Verifie que mon_pfapi/config/cors.php existe.
 2. Verifie que HandleCors est ajoute dans bootstrap/app.php.
 3. Relance Laravel, car la configuration est chargee au demarrage.
 
-Commandes
-cd "C:\\Users\\LOQ\\Documents\\yassmin pfe\\mon_pfapi"
-..\\tools\\runtime\\php-8.4.22\\php.exe artisan config:clear
-..\\tools\\runtime\\php-8.4.22\\php.exe artisan serve --host=0.0.0.0 --port=8000
+COMMANDES A EXECUTER
+Commande 1 : cd "C:\\Users\\LOQ\\Documents\\yassmin pfe\\mon_pfapi"
+Commande 2 : ..\\tools\\runtime\\php-8.4.22\\php.exe artisan config:clear
+Commande 3 : ..\\tools\\runtime\\php-8.4.22\\php.exe artisan serve --host=0.0.0.0 --port=8000
 
-Verification
+VERIFICATION FINALE
 Relance Flutter Web et recharge Chrome.`
       },
       {
         keys: ["No devices found", "adb", "unauthorized", "device offline"],
         title: "Android non detecte",
-        answer: String.raw`Ce que cela veut dire
+        answer: String.raw`DIAGNOSTIC
 Flutter ne voit pas le telephone Android.
 
-Pourquoi ici
+CAUSE PROBABLE DANS CE PROJET
 Le mode developpeur, le debogage USB ou l'autorisation RSA ne sont pas actifs.
 
-Solution pas a pas
+SOLUTION PAS A PAS
 1. Activer Options developpeur sur Android.
 2. Activer Debogage USB.
 3. Brancher le cable USB.
 4. Accepter la fenetre d'autorisation sur le telephone.
 5. Relancer devices.
 
-Commandes
-C:\\Users\\LOQ\\dev\\flutter\\bin\\flutter.bat devices
-adb devices
+COMMANDES A EXECUTER
+Commande 1 : C:\\Users\\LOQ\\dev\\flutter\\bin\\flutter.bat devices
+Commande 2 : adb devices
 
-Verification
+VERIFICATION FINALE
 Le telephone doit apparaitre avec un identifiant et le statut device.`
       }
     ];
@@ -1086,23 +1099,26 @@ Le telephone doit apparaitre avec un identifiant et le statut device.`
         setStatus("Reponse locale trouvee.");
         return;
       }
-      setAnswer(String.raw`Diagnostic local general
+      setAnswer(String.raw`DIAGNOSTIC
+L'assistant local n'a pas reconnu une erreur precise dans le message colle.
 
-1. Verifie que tu es dans le bon dossier:
-cd "C:\\Users\\LOQ\\Documents\\yassmin pfe"
+CAUSE PROBABLE DANS CE PROJET
+Le probleme vient souvent d'un backend non lance, d'une mauvaise URL API_BASE_URL ou d'un appareil Android non detecte.
 
-2. Verifie que Laravel tourne:
-Invoke-RestMethod http://127.0.0.1:8000/api/health
+SOLUTION PAS A PAS
+1. Verifie que tu es dans le bon dossier du projet.
+2. Verifie que Laravel tourne sur le port 8000.
+3. Verifie que Flutter voit la cible Android, Windows ou Web.
+4. Relance Flutter avec l'URL API adaptee a la cible.
+5. Si l'erreur continue, colle le message exact dans la zone "Erreur exacte".
 
-3. Verifie la cible Flutter:
-C:\\Users\\LOQ\\dev\\flutter\\bin\\flutter.bat devices
+COMMANDES A EXECUTER
+Commande 1 : cd "C:\\Users\\LOQ\\Documents\\yassmin pfe"
+Commande 2 : Invoke-RestMethod http://127.0.0.1:8000/api/health
+Commande 3 : C:\\Users\\LOQ\\dev\\flutter\\bin\\flutter.bat devices
 
-4. Relance avec la bonne API_BASE_URL:
-- Windows/Web: http://127.0.0.1:8000/api
-- Emulateur Android: http://10.0.2.2:8000/api
-- Telephone Android: http://ADRESSE_IP_PC:8000/api
-
-5. Si l'erreur continue, colle le message exact dans la zone "Erreur exacte".`);
+VERIFICATION FINALE
+Si le backend repond status: ok et que Flutter liste un appareil, le lancement peut continuer avec la bonne valeur API_BASE_URL.`);
       setStatus("Reponse locale generale.");
     }
 
@@ -1124,7 +1140,8 @@ Question de Yassmine: ${question || "(pas de question, analyser l'erreur)"}
 Erreur ou sortie terminal:
 ${errorLog || "(aucune erreur collee)"}
 
-Donne une solution executable sur Windows avec les commandes exactes du projet.`;
+Donne une solution executable sur Windows avec les commandes exactes du projet.
+Format obligatoire: texte structure lisible, sans Markdown, sans bloc de code, sans JSON, sans HTML.`;
 
       setStatus("Gemini analyse l'erreur...");
       setAnswer("Analyse en cours...");

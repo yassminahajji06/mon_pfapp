@@ -20,6 +20,7 @@ docs/yassmine-guide/index.html
 - assistant debug Gemini avec saisie de clé API côté navigateur ;
 - bouton pour enregistrer la clé Gemini uniquement dans le navigateur local ;
 - réponses locales sans clé Gemini pour les erreurs fréquentes.
+- sortie d'analyse textuelle structurée : diagnostic, cause, solution, commandes et vérification finale.
 
 La clé Gemini n'est jamais stockée dans le dépôt. Pour éviter de la recoller à chaque utilisation,
 ouvrir le guide, coller la clé, puis cliquer sur **Enregistrer la clé**. Elle sera conservée dans
