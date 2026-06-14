@@ -12,15 +12,6 @@ Future<void> pumpMonPfApp(WidgetTester tester) async {
   await tester.pumpWidget(const MyApp());
 }
 
-Finder verticalScrollable() {
-  return find
-      .byWidgetPredicate(
-        (widget) =>
-            widget is Scrollable && widget.axisDirection == AxisDirection.down,
-      )
-      .first;
-}
-
 void main() {
   testWidgets('starts on the mockup-inspired login screen', (tester) async {
     await pumpMonPfApp(tester);
@@ -74,7 +65,7 @@ void main() {
     expect(find.textContaining('Mon Panier'), findsOneWidget);
 
     await tester.tap(find.textContaining('Passer la commande'));
-    await tester.pump(const Duration(milliseconds: 250));
+    await tester.pump(const Duration(milliseconds: 650));
     expect(find.text('Suivi de livraison'), findsOneWidget);
     expect(find.text('Etapes de la commande'), findsOneWidget);
   });
@@ -86,11 +77,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     await tester.pump();
 
-    await tester.scrollUntilVisible(
-      find.text('Livreur'),
-      260,
-      scrollable: verticalScrollable(),
-    );
+    await tester.dragFrom(const Offset(200, 720), const Offset(0, -720));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Livreur'));
@@ -100,11 +87,7 @@ void main() {
     await tester.tap(find.byTooltip('Retour'));
     await tester.pumpAndSettle();
 
-    await tester.scrollUntilVisible(
-      find.text('Admin'),
-      260,
-      scrollable: verticalScrollable(),
-    );
+    await tester.dragFrom(const Offset(200, 720), const Offset(0, -720));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Admin'));
     await tester.pumpAndSettle();

@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:mon_pfapp/domain/models/order_model.dart';
 import 'package:mon_pfapp/shared/widgets/app_ui.dart';
 
 class TrackingScreen extends StatefulWidget {
   final ValueChanged<String> onNavigate;
+  final OrderModel? order;
 
-  const TrackingScreen({super.key, required this.onNavigate});
+  const TrackingScreen({super.key, required this.onNavigate, this.order});
 
   @override
   State<TrackingScreen> createState() => _TrackingScreenState();
@@ -36,13 +38,19 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final order = widget.order;
+    final orderId = order?.id ?? '#PF-2024-0847';
+    final estimated = order?.status.toLowerCase() == 'livre'
+        ? '0 min'
+        : '18 min';
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Column(
         children: [
           RedHeader(
             title: 'Suivi de livraison',
-            subtitle: 'Commande #PF-2024-0847',
+            subtitle: 'Commande $orderId',
             leading: IconButton.filled(
               onPressed: () => widget.onNavigate('orders'),
               style: IconButton.styleFrom(
@@ -63,20 +71,20 @@ class _TrackingScreenState extends State<TrackingScreen> {
                   padding: const EdgeInsets.all(18),
                   child: Row(
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'Temps estime',
                               style: TextStyle(
                                 color: AppColors.mutedText,
                                 fontSize: 12,
                               ),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text(
-                              '18 min',
+                              estimated,
                               style: TextStyle(
                                 color: AppColors.text,
                                 fontSize: 30,
@@ -84,8 +92,8 @@ class _TrackingScreenState extends State<TrackingScreen> {
                               ),
                             ),
                             Text(
-                              'Arrivee vers 15:10',
-                              style: TextStyle(
+                              order?.status ?? 'Arrivee vers 15:10',
+                              style: const TextStyle(
                                 color: AppColors.mutedText,
                                 fontSize: 12,
                               ),

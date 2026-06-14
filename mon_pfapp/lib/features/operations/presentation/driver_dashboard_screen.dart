@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:mon_pfapp/domain/models/order_model.dart';
+import 'package:mon_pfapp/features/client/data/order_service.dart';
 import 'package:mon_pfapp/shared/widgets/app_ui.dart';
 
 class DriverDashboardScreen extends StatefulWidget {
@@ -13,28 +15,33 @@ class DriverDashboardScreen extends StatefulWidget {
 
 class _DriverDashboardScreenState extends State<DriverDashboardScreen> {
   bool _online = true;
+  bool _loading = true;
   final Set<String> _acceptedOrders = {};
+  List<OrderModel> _orders = [];
 
-  final _orders = const [
-    _DriverOrder(
-      id: '#PF-2024-0848',
-      client: 'Sofia A.',
-      address: "45 Rue Ben M'hidi, Alger",
-      items: 3,
-      distance: '1.4 km',
-      eta: '8 min',
-      amount: 1890,
-    ),
-    _DriverOrder(
-      id: '#PF-2024-0849',
-      client: 'Rami K.',
-      address: '12 Bd Zighout Youcef, Bab El Oued',
-      items: 2,
-      distance: '2.7 km',
-      eta: '14 min',
-      amount: 980,
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadOrders();
+  }
+
+  Future<void> _loadOrders() async {
+    final orders = await OrderService.fetchDriverOrders();
+
+    if (!mounted) return;
+    setState(() {
+      _orders = orders;
+      _loading = false;
+    });
+  }
+
+  Future<void> _accept(OrderModel order) async {
+    await OrderService.acceptForDelivery(order);
+
+    if (!mounted) return;
+    setState(() => _acceptedOrders.add(order.id));
+    await _loadOrders();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,125 +173,137 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                ..._orders.map((order) {
-                  final accepted = _acceptedOrders.contains(order.id);
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: SurfaceCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  order.id,
+                if (_loading)
+                  const Center(child: CircularProgressIndicator())
+                else if (_orders.isEmpty)
+                  const SurfaceCard(
+                    child: Text(
+                      'Aucune commande disponible pour livraison.',
+                      style: TextStyle(color: AppColors.mutedText),
+                    ),
+                  )
+                else
+                  ..._orders.map((order) {
+                    final accepted =
+                        _acceptedOrders.contains(order.id) ||
+                        order.status.toLowerCase() == 'en route';
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: SurfaceCard(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    order.id,
+                                    style: const TextStyle(
+                                      color: AppColors.text,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  formatDa(order.amount),
                                   style: const TextStyle(
-                                    color: AppColors.text,
+                                    color: AppColors.red,
                                     fontWeight: FontWeight.w900,
                                   ),
                                 ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${order.client} - ${order.itemsCount} articles',
+                              style: const TextStyle(
+                                color: AppColors.mutedText,
+                                fontSize: 12,
                               ),
-                              Text(
-                                formatDa(order.amount),
-                                style: const TextStyle(
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.location_on_outlined,
                                   color: AppColors.red,
-                                  fontWeight: FontWeight.w900,
+                                  size: 15,
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${order.client} - ${order.items} articles',
-                            style: const TextStyle(
-                              color: AppColors.mutedText,
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.location_on_outlined,
-                                color: AppColors.red,
-                                size: 15,
-                              ),
-                              const SizedBox(width: 4),
-                              Expanded(
-                                child: Text(
-                                  order.address,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: AppColors.mutedText,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            '${order.distance} - ${order.eta}',
-                            style: const TextStyle(
-                              color: AppColors.mutedText,
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          if (accepted)
-                            Row(
-                              children: [
-                                const Expanded(
-                                  child: StatusPill(
-                                    label: 'Acceptee',
-                                    color: AppColors.success,
-                                  ),
-                                ),
-                                IconButton.filledTonal(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.phone_rounded),
-                                  tooltip: 'Appeler le client',
-                                ),
-                              ],
-                            )
-                          else
-                            Row(
-                              children: [
+                                const SizedBox(width: 4),
                                 Expanded(
-                                  child: PrimaryButton(
-                                    label: 'Accepter',
-                                    icon: Icons.check_rounded,
-                                    onPressed: _online
-                                        ? () => setState(
-                                            () => _acceptedOrders.add(order.id),
-                                          )
-                                        : null,
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: OutlinedButton(
-                                    onPressed: () {},
-                                    style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 15,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(14),
-                                      ),
+                                  child: Text(
+                                    order.address,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: AppColors.mutedText,
+                                      fontSize: 12,
                                     ),
-                                    child: const Text('Refuser'),
                                   ),
                                 ),
                               ],
                             ),
-                        ],
+                            const SizedBox(height: 6),
+                            const Text(
+                              '1.4 km - 8 min',
+                              style: TextStyle(
+                                color: AppColors.mutedText,
+                                fontSize: 12,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            if (accepted)
+                              Row(
+                                children: [
+                                  const Expanded(
+                                    child: StatusPill(
+                                      label: 'Acceptee',
+                                      color: AppColors.success,
+                                    ),
+                                  ),
+                                  IconButton.filledTonal(
+                                    onPressed: () {},
+                                    icon: const Icon(Icons.phone_rounded),
+                                    tooltip: 'Appeler le client',
+                                  ),
+                                ],
+                              )
+                            else
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: PrimaryButton(
+                                      label: 'Accepter',
+                                      icon: Icons.check_rounded,
+                                      onPressed: _online
+                                          ? () => _accept(order)
+                                          : null,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: OutlinedButton(
+                                      onPressed: () {},
+                                      style: OutlinedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 15,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            14,
+                                          ),
+                                        ),
+                                      ),
+                                      child: const Text('Refuser'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
               ],
             ),
           ),
@@ -292,24 +311,4 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen> {
       ),
     );
   }
-}
-
-class _DriverOrder {
-  final String id;
-  final String client;
-  final String address;
-  final int items;
-  final String distance;
-  final String eta;
-  final int amount;
-
-  const _DriverOrder({
-    required this.id,
-    required this.client,
-    required this.address,
-    required this.items,
-    required this.distance,
-    required this.eta,
-    required this.amount,
-  });
 }

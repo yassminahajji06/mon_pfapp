@@ -4,7 +4,10 @@ import 'package:mon_pfapp/core/constants.dart';
 import 'package:mon_pfapp/data/demo_data.dart';
 import 'package:mon_pfapp/domain/models/cart_item.dart';
 import 'package:mon_pfapp/domain/models/menu_item.dart';
+import 'package:mon_pfapp/domain/models/order_model.dart';
 import 'package:mon_pfapp/domain/models/user_model.dart';
+import 'package:mon_pfapp/features/client/data/menu_service.dart';
+import 'package:mon_pfapp/features/client/data/order_service.dart';
 import 'package:mon_pfapp/features/auth/presentation/login_screen.dart';
 import 'package:mon_pfapp/features/auth/presentation/register_screen.dart';
 import 'package:mon_pfapp/features/client/presentation/cart_screen.dart';
@@ -52,6 +55,12 @@ class MonPfApp extends StatefulWidget {
 class _MonPfAppState extends State<MonPfApp> {
   String _screen = 'login';
   UserModel? _user;
+  List<MenuCategory> _categories = DemoData.categories;
+  List<MenuItem> _menuItems = DemoData.menuItems;
+  List<OrderModel> _orders = DemoData.recentOrders;
+  OrderModel? _activeOrder;
+  bool _ordersLoading = false;
+  bool _checkoutInProgress = false;
   List<CartItem> _cart = [
     CartItem(item: DemoData.menuItems[2], quantity: 1),
     CartItem(item: DemoData.menuItems[0], quantity: 2),
@@ -60,21 +69,69 @@ class _MonPfAppState extends State<MonPfApp> {
 
   int get _cartCount => _cart.fold(0, (sum, item) => sum + item.quantity);
 
+  @override
+  void initState() {
+    super.initState();
+    _loadCatalog();
+  }
+
+  Future<void> _loadCatalog() async {
+    final catalog = await MenuService.fetchCatalog();
+    if (!mounted) return;
+
+    setState(() {
+      _categories = catalog.categories;
+      _menuItems = catalog.items;
+    });
+  }
+
+  Future<void> _loadOrders() async {
+    setState(() => _ordersLoading = true);
+    final orders = await OrderService.fetchOrders();
+    if (!mounted) return;
+
+    OrderModel? activeOrder;
+    for (final order in orders) {
+      if (order.status.toLowerCase() != 'livre') {
+        activeOrder = order;
+        break;
+      }
+    }
+
+    setState(() {
+      _orders = orders;
+      _ordersLoading = false;
+      _activeOrder = activeOrder;
+    });
+  }
+
   void _navigate(String screen) {
+    if (screen == 'orders' && _user != null) {
+      _loadOrders();
+    }
+
     setState(() => _screen = screen == 'orders' ? 'orders' : screen);
   }
 
   void _authenticate(UserModel user) {
     setState(() {
       _user = user;
-      _screen = 'home';
+      _screen = switch (user.role) {
+        'admin' || 'serveur' => 'admin',
+        'livreur' => 'driver',
+        _ => 'home',
+      };
     });
+
+    _loadOrders();
   }
 
   void _logout() {
     setState(() {
       _user = null;
       _screen = 'login';
+      _orders = DemoData.recentOrders;
+      _activeOrder = null;
     });
   }
 
@@ -123,8 +180,43 @@ class _MonPfAppState extends State<MonPfApp> {
     );
   }
 
-  void _checkout() {
-    setState(() => _screen = 'tracking');
+  Future<void> _checkout() async {
+    if (_cart.isEmpty || _checkoutInProgress) return;
+
+    if (_user == null && !AppConstants.demoMode) {
+      _navigate('login');
+      return;
+    }
+
+    setState(() => _checkoutInProgress = true);
+
+    try {
+      final order = await OrderService.createOrder(
+        items: _cart,
+        address: _user?.email == 'yassmine@monpf.fr'
+            ? '12 Rue Didouche Mourad, Alger Centre'
+            : 'Alger Centre',
+      );
+
+      if (!mounted) return;
+      setState(() {
+        _activeOrder = order;
+        _orders = [order, ..._orders];
+        _cart = [];
+        _screen = 'tracking';
+      });
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString()),
+          backgroundColor: AppColors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _checkoutInProgress = false);
+    }
   }
 
   @override
@@ -139,11 +231,15 @@ class _MonPfAppState extends State<MonPfApp> {
       'home' => HomeScreen(
         user: user,
         cartCount: _cartCount,
+        categories: _categories,
+        menuItems: _menuItems,
         onNavigate: _navigate,
         onAddToCart: _addToCart,
       ),
       'menu' => MenuScreen(
         cartCount: _cartCount,
+        categories: _categories,
+        menuItems: _menuItems,
         onNavigate: _navigate,
         onAddToCart: _addToCart,
       ),
@@ -154,9 +250,16 @@ class _MonPfAppState extends State<MonPfApp> {
         onDecrease: (item) => _updateQuantity(item.item.id, -1),
         onRemove: (item) => _removeFromCart(item.item.id),
         onCheckout: _checkout,
+        checkoutInProgress: _checkoutInProgress,
       ),
-      'tracking' => TrackingScreen(onNavigate: _navigate),
-      'orders' => OrdersScreen(cartCount: _cartCount, onNavigate: _navigate),
+      'tracking' => TrackingScreen(onNavigate: _navigate, order: _activeOrder),
+      'orders' => OrdersScreen(
+        cartCount: _cartCount,
+        orders: _orders,
+        loading: _ordersLoading,
+        onNavigate: _navigate,
+        onRefresh: _loadOrders,
+      ),
       'profile' => ProfileScreen(
         user: user,
         cartCount: _cartCount,

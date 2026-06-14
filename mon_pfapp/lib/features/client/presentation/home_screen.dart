@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:mon_pfapp/data/demo_data.dart';
 import 'package:mon_pfapp/domain/models/menu_item.dart';
 import 'package:mon_pfapp/domain/models/user_model.dart';
 import 'package:mon_pfapp/shared/widgets/app_ui.dart';
@@ -8,6 +7,8 @@ import 'package:mon_pfapp/shared/widgets/app_ui.dart';
 class HomeScreen extends StatefulWidget {
   final UserModel user;
   final int cartCount;
+  final List<MenuCategory> categories;
+  final List<MenuItem> menuItems;
   final ValueChanged<String> onNavigate;
   final ValueChanged<MenuItem> onAddToCart;
 
@@ -15,6 +16,8 @@ class HomeScreen extends StatefulWidget {
     super.key,
     required this.user,
     required this.cartCount,
+    required this.categories,
+    required this.menuItems,
     required this.onNavigate,
     required this.onAddToCart,
   });
@@ -27,11 +30,11 @@ class _HomeScreenState extends State<HomeScreen> {
   String _selectedCategory = 'plats';
 
   List<MenuItem> get _popularItems {
-    final byCategory = DemoData.menuItems
+    final byCategory = widget.menuItems
         .where((item) => item.category == _selectedCategory)
         .toList();
     return byCategory.isEmpty
-        ? DemoData.menuItems.where((item) => item.popular).toList()
+        ? widget.menuItems.where((item) => item.popular).toList()
         : byCategory;
   }
 
@@ -124,10 +127,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 92,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
-                    itemCount: DemoData.categories.length,
+                    itemCount: widget.categories.length,
                     separatorBuilder: (_, _) => const SizedBox(width: 10),
                     itemBuilder: (context, index) {
-                      final category = DemoData.categories[index];
+                      final category = widget.categories[index];
                       final selected = _selectedCategory == category.id;
                       return InkWell(
                         onTap: () =>

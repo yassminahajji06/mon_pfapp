@@ -10,6 +10,7 @@ class CartScreen extends StatelessWidget {
   final ValueChanged<CartItem> onDecrease;
   final ValueChanged<CartItem> onRemove;
   final VoidCallback onCheckout;
+  final bool checkoutInProgress;
 
   const CartScreen({
     super.key,
@@ -19,6 +20,7 @@ class CartScreen extends StatelessWidget {
     required this.onDecrease,
     required this.onRemove,
     required this.onCheckout,
+    this.checkoutInProgress = false,
   });
 
   int get subtotal => items.fold(0, (sum, item) => sum + item.total);
@@ -221,9 +223,11 @@ class CartScreen extends StatelessWidget {
               color: Colors.white,
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
               child: PrimaryButton(
-                label: 'Passer la commande - ${formatDa(total)}',
+                label: checkoutInProgress
+                    ? 'Creation de la commande...'
+                    : 'Passer la commande - ${formatDa(total)}',
                 icon: Icons.check_circle_outline_rounded,
-                onPressed: onCheckout,
+                onPressed: checkoutInProgress ? null : onCheckout,
               ),
             ),
           AppBottomNav(

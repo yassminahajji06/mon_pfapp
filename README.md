@@ -5,13 +5,13 @@
 <h1 align="center">Mon PF App</h1>
 
 <p align="center">
-  Application Flutter de gestion des commandes, paniers, livraisons, espace livreur et administration restaurant.
+  Application Flutter + Laravel de commande restaurant, panier, livraison, espace livreur et administration.
 </p>
 
 <p align="center">
   <a href="docs/tutorial/Mon_PF_App_Tutorial_Yassmine_Hajji.pdf"><strong>Lire le tutoriel PDF</strong></a>
   ·
-  <a href="mon_pfapp/README.md"><strong>Lancer l'app</strong></a>
+  <a href="docs/demo-prod-runbook.md"><strong>Lancer la demo-prod</strong></a>
   ·
   <a href="docs/specifications/requirements-summary.md"><strong>Exigences</strong></a>
   ·
@@ -23,7 +23,8 @@
   <img alt="Dart" src="https://img.shields.io/badge/Dart-3.12.2-0175C2?logo=dart&logoColor=white">
   <img alt="Android" src="https://img.shields.io/badge/Android-APK%20ready-3DDC84?logo=android&logoColor=white">
   <img alt="Tests" src="https://img.shields.io/badge/Tests-passing-43A047">
-  <img alt="Mode" src="https://img.shields.io/badge/Demo%20mode-default-E53935">
+  <img alt="Laravel" src="https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white">
+  <img alt="Mode" src="https://img.shields.io/badge/Demo--prod-ready-E53935">
 </p>
 
 ## Project Identity
@@ -43,7 +44,7 @@
 | Client | Login, menu browsing, cart, checkout, order tracking, order history, profile |
 | Driver | Delivery dashboard, delivery availability, accept/refuse simulation, delivery metrics |
 | Admin | Sales overview, active clients, orders, driver availability, stock alert |
-| Backend-ready role | Laravel/MySQL REST API contract prepared for authentication and future data sync |
+| Backend API | Laravel REST API with auth, roles, menu, orders, admin stats and driver queue |
 
 ## Architecture
 
@@ -51,14 +52,14 @@
 flowchart LR
   U["User"] --> A["Flutter App"]
   A --> B["Feature Screens"]
-  B --> C["AuthService"]
-  C -->|HTTPS REST| D["Laravel API"]
-  D --> E[("MySQL Database")]
+  B --> C["API Services"]
+  C -->|REST JSON| D["Laravel API"]
+  D --> E[("SQLite demo DB")]
   C --> F["Secure Storage<br/>token + role"]
   A --> G["DemoData<br/>offline presentation mode"]
 ```
 
-The app is currently demo-first so it can be tested during presentation without a backend outage. When the real API is ready, run with `DEMO_MODE=false` and provide `API_BASE_URL`.
+The app can run offline in demo mode or against the real Laravel API with `DEMO_MODE=false`.
 
 ## Repository Map
 
@@ -78,7 +79,8 @@ The app is currently demo-first so it can be tested during presentation without 
 │   │   └── shared/         # Reusable UI widgets
 │   ├── test/               # Auth/navigation widget tests
 │   └── docs/               # Technical project notes
-└── tools/                  # Screenshot and tutorial generation scripts
+├── mon_pfapi/              # Laravel REST API + SQLite demo database
+└── tools/                  # Local runtime and tutorial tooling
 ```
 
 ## Current Status
@@ -87,11 +89,12 @@ The app is currently demo-first so it can be tested during presentation without 
 |---|---|
 | Flutter analysis | Passing |
 | Flutter tests | Passing, 5 tests |
+| Laravel API tests | Passing, 5 tests |
 | Web release build | Passing |
 | Android debug APK | Built |
 | Android signed release APK | Built |
 | Windows release | Blocked until Visual Studio ATL component is installed |
-| Production backend | API contract prepared, real endpoints still required |
+| Demo-prod backend | Laravel API ready locally with SQLite seed data |
 
 ## Quick Start
 
@@ -102,10 +105,19 @@ flutter test
 flutter run
 ```
 
-Run against a real API:
+Run the backend:
 
 ```powershell
-flutter run --dart-define=DEMO_MODE=false --dart-define=API_BASE_URL=https://votre-domaine/api
+cd mon_pfapi
+..\tools\runtime\php-8.4.22\php.exe artisan migrate:fresh --seed
+..\tools\runtime\php-8.4.22\php.exe artisan serve --host=0.0.0.0 --port=8000
+```
+
+Run Flutter against the backend:
+
+```powershell
+cd mon_pfapp
+flutter run --dart-define=DEMO_MODE=false --dart-define=API_BASE_URL=http://127.0.0.1:8000/api
 ```
 
 Install the Android release APK on a connected device:
@@ -114,20 +126,7 @@ Install the Android release APK on a connected device:
 adb install -r build/app/outputs/flutter-apk/app-release.apk
 ```
 
-<details>
-<summary><strong>Backend contract</strong></summary>
-
-The Flutter auth layer expects these REST endpoints:
-
-| Method | Endpoint | Expected response |
-|---|---|---|
-| `POST` | `/register` | `token`, `user: { id, nom, email, role }` |
-| `POST` | `/login` | `token`, `user: { id, nom, email, role }` |
-| `POST` | `/logout` | Any successful logout response |
-
-Public registration must create a `client` account only. Sensitive roles such as `admin` and `livreur` must be assigned server-side.
-
-</details>
+See [Backend API](docs/backend-api.md) for endpoints, roles and accounts.
 
 <details>
 <summary><strong>Security decisions already applied</strong></summary>
@@ -150,6 +149,8 @@ Public registration must create a `client` account only. Sensitive roles such as
 | [Editable tutorial DOCX](docs/tutorial/Mon_PF_App_Tutorial_Yassmine_Hajji.docx) | Source document for future edits |
 | [Requirements summary](docs/specifications/requirements-summary.md) | Extracted project context from the supplied PDFs |
 | [Validation checklist](docs/specifications/validation-checklist.md) | What is covered vs. what remains for full cahier de charge validation |
+| [Backend API](docs/backend-api.md) | Laravel structure, endpoints, roles, tests and launch commands |
+| [Demo-prod runbook](docs/demo-prod-runbook.md) | Fast local demo steps for API, Windows and Android |
 | [Logo note](docs/design/logo.md) | Logo concept and generated app icon locations |
 | [Setup and release guide](mon_pfapp/docs/setup_and_release.md) | Android/Windows setup, build commands and blockers |
 | [Testing guide](mon_pfapp/docs/testing_guide.md) | How to verify app behavior |
@@ -159,4 +160,4 @@ Public registration must create a `client` account only. Sensitive roles such as
 
 Android is the strongest target today: the SDK is installed, Flutter doctor passes, and the APK builds. Windows needs the Visual Studio component **C++ ATL for latest v142 build tools** because `flutter_secure_storage_windows` requires `atlstr.h`.
 
-For a true production launch, the next technical steps are the Laravel/MySQL API, role middleware, real menu/order endpoints, delivery status synchronization, notification strategy, and CI/CD builds.
+For a true production launch, the next technical steps are HTTPS hosting, a hosted MySQL/PostgreSQL database, Laravel Sanctum, delivery status synchronization, notification strategy, and CI/CD builds.

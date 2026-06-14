@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:mon_pfapp/data/demo_data.dart';
+import 'package:mon_pfapp/domain/models/order_model.dart';
+import 'package:mon_pfapp/features/client/data/order_service.dart';
 import 'package:mon_pfapp/shared/widgets/app_ui.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
@@ -14,6 +15,27 @@ class AdminDashboardScreen extends StatefulWidget {
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   String _tab = 'apercu';
+  bool _loading = true;
+  Map<String, dynamic> _stats = {};
+  List<OrderModel> _orders = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDashboard();
+  }
+
+  Future<void> _loadDashboard() async {
+    final stats = await OrderService.fetchStats();
+    final orders = await OrderService.fetchOrders();
+
+    if (!mounted) return;
+    setState(() {
+      _stats = stats;
+      _orders = orders;
+      _loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,9 +105,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               child: switch (_tab) {
                 'commandes' => _OrdersAdminTab(
                   key: const ValueKey('commandes'),
+                  orders: _orders,
                 ),
                 'equipe' => const _TeamAdminTab(key: ValueKey('equipe')),
-                _ => const _OverviewAdminTab(key: ValueKey('apercu')),
+                _ => _OverviewAdminTab(
+                  key: const ValueKey('apercu'),
+                  stats: _stats,
+                  loading: _loading,
+                ),
               },
             ),
           ),
@@ -96,63 +123,71 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 }
 
 class _OverviewAdminTab extends StatelessWidget {
-  const _OverviewAdminTab({super.key});
+  final Map<String, dynamic> stats;
+  final bool loading;
+
+  const _OverviewAdminTab({
+    super.key,
+    required this.stats,
+    required this.loading,
+  });
 
   @override
   Widget build(BuildContext context) {
+    if (loading) return const Center(child: CircularProgressIndicator());
+
     return ListView(
       padding: const EdgeInsets.all(20),
-      children: const [
+      children: [
         Row(
           children: [
             Expanded(
               child: StatCard(
                 label: 'CA du jour',
-                value: '402 000 DA',
+                value: formatDa(_intStat('revenue')),
                 icon: Icons.trending_up_rounded,
                 color: AppColors.red,
-                helper: '+12%',
+                helper: 'Reel',
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: StatCard(
                 label: 'Commandes',
-                value: '47',
+                value: _intStat('ordersCount').toString(),
                 icon: Icons.inventory_2_outlined,
                 color: AppColors.blue,
-                helper: '+8',
+                helper: '${_intStat('inProgressCount')} en cours',
               ),
             ),
           ],
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         Row(
           children: [
             Expanded(
               child: StatCard(
                 label: 'Clients actifs',
-                value: '134',
+                value: _intStat('clientsCount').toString(),
                 icon: Icons.people_alt_outlined,
                 color: AppColors.success,
-                helper: '+5%',
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: StatCard(
-                label: 'Livreurs',
-                value: '6 / 8',
+                label: 'Menu actif',
+                value: _intStat('menuItemsCount').toString(),
                 icon: Icons.delivery_dining_rounded,
                 color: AppColors.warning,
               ),
             ),
           ],
         ),
-        SizedBox(height: 16),
-        _RevenueCard(),
-        SizedBox(height: 16),
-        SurfaceCard(
+        const SizedBox(height: 16),
+        const _RevenueCard(),
+        const SizedBox(height: 16),
+        const SurfaceCard(
           child: Row(
             children: [
               Icon(Icons.warning_amber_rounded, color: AppColors.warning),
@@ -171,6 +206,13 @@ class _OverviewAdminTab extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  int _intStat(String key) {
+    final value = stats[key];
+    if (value is int) return value;
+    if (value is num) return value.round();
+    return int.tryParse(value?.toString() ?? '') ?? 0;
   }
 }
 
@@ -236,13 +278,15 @@ class _RevenueCard extends StatelessWidget {
 }
 
 class _OrdersAdminTab extends StatelessWidget {
-  const _OrdersAdminTab({super.key});
+  final List<OrderModel> orders;
+
+  const _OrdersAdminTab({super.key, required this.orders});
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(20),
-      children: DemoData.recentOrders.map((order) {
+      children: orders.map((order) {
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: SurfaceCard(

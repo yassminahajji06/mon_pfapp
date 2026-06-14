@@ -29,3 +29,6 @@ Thumbs.db
 .codex-tmp/
 docs/tutorial/rendered/
 docs/tutorial/pdf_rendered/
+
+# Local portable runtime used by Codex/dev machines
+tools/runtime/

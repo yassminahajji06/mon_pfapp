@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 
-import 'package:mon_pfapp/data/demo_data.dart';
 import 'package:mon_pfapp/domain/models/menu_item.dart';
 import 'package:mon_pfapp/shared/widgets/app_ui.dart';
 
 class MenuScreen extends StatefulWidget {
   final int cartCount;
+  final List<MenuCategory> categories;
+  final List<MenuItem> menuItems;
   final ValueChanged<String> onNavigate;
   final ValueChanged<MenuItem> onAddToCart;
 
   const MenuScreen({
     super.key,
     required this.cartCount,
+    required this.categories,
+    required this.menuItems,
     required this.onNavigate,
     required this.onAddToCart,
   });
@@ -25,7 +28,7 @@ class _MenuScreenState extends State<MenuScreen> {
   String _query = '';
 
   List<MenuItem> get _items {
-    return DemoData.menuItems.where((item) {
+    return widget.menuItems.where((item) {
       final matchesCategory = item.category == _category;
       final query = _query.trim().toLowerCase();
       final matchesQuery =
@@ -81,10 +84,10 @@ class _MenuScreenState extends State<MenuScreen> {
                   height: 38,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
-                    itemCount: DemoData.categories.length,
+                    itemCount: widget.categories.length,
                     separatorBuilder: (_, _) => const SizedBox(width: 8),
                     itemBuilder: (context, index) {
-                      final category = DemoData.categories[index];
+                      final category = widget.categories[index];
                       final selected = category.id == _category;
                       return ChoiceChip(
                         selected: selected,
