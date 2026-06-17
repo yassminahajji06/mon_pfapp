@@ -108,15 +108,37 @@
 
 \chapter*{Remerciements}
 \addcontentsline{toc}{chapter}{Remerciements}
-Je tiens à remercier l'équipe pédagogique du BTS Développement des Applications Informatiques du Lycée Qualifiant Technique Ibn Al-Haitam pour l'encadrement, les connaissances techniques et la méthodologie acquises durant ma formation.
+\vspace*{0.7cm}
+Avant de présenter ce travail, je tiens à exprimer ma profonde gratitude à l'équipe pédagogique du BTS Développement des Applications Informatiques du Lycée Qualifiant Technique Ibn Al-Haitam. Les enseignements reçus durant cette formation m'ont permis d'acquérir une méthode de travail, une vision technique et une discipline nécessaires pour mener un projet informatique complet.
 
-Je remercie également toutes les personnes qui ont contribué aux tests, aux remarques et à l'amélioration progressive de l'application \textbf{Mon PF App}. Ce projet m'a permis de rapprocher les acquis de programmation, base de données, analyse UML, sécurité, tests et documentation d'un besoin applicatif concret : la gestion des commandes d'un restaurant.
+Je remercie également les enseignants et encadrants qui m'ont accompagnée dans l'apprentissage de l'analyse, de la conception, de la programmation, des bases de données et de la documentation technique. Leurs remarques et leurs conseils ont contribué à améliorer la qualité de ce projet et à mieux organiser les différentes étapes de réalisation.
+
+Mes remerciements s'adressent aussi à toutes les personnes qui ont participé aux tests de l'application \textbf{Mon PF App}, que ce soit par leurs observations, leurs questions ou leurs retours d'utilisation. Ces retours ont aidé à rendre l'interface plus claire, les parcours plus simples et la démonstration plus cohérente.
+
+Je remercie enfin ma famille pour son soutien, sa patience et ses encouragements pendant toute la période de préparation de ce projet de fin d'études. Ce travail représente une étape importante dans mon parcours de formation, car il m'a permis d'appliquer les connaissances acquises à une situation concrète : la gestion numérique des commandes d'un restaurant.
+
+Ce projet m'a donné l'occasion de relier plusieurs compétences : développement mobile avec Flutter, création d'une API Laravel, conception de base de données, sécurité des rôles, tests, génération d'un APK Android et rédaction d'une documentation académique. Il constitue donc une synthèse pratique des apprentissages réalisés durant la formation.
+
+\vfill
+\begin{flushright}
+\textit{HAJJI Yassmine}
+\end{flushright}
 
 \chapter*{Résumé}
 \addcontentsline{toc}{chapter}{Résumé}
-Ce rapport présente \textbf{Mon PF App}, une application mobile et multi-plateforme de gestion des commandes d'un restaurant. Le système permet à un client de consulter un menu, gérer un panier, passer une commande et suivre son état. Il propose aussi des espaces dédiés à l'administrateur, au serveur et au livreur.
+\vspace*{0.7cm}
+\textbf{Mon PF App} est une application mobile et multi-plateforme destinée à la gestion des commandes d'un restaurant. Le projet répond à un besoin fréquent dans le domaine de la restauration : simplifier la prise de commande, limiter les erreurs manuelles, organiser le suivi et faciliter la communication entre le client, le restaurant et le livreur.
 
-La solution repose sur \textbf{Flutter} pour l'interface Android, Windows et Web, et sur \textbf{Laravel} pour l'API REST. La version livrée est une version \textbf{démo-prod} adaptée à la soutenance : backend local, base SQLite seedée, comptes de test, sécurité des rôles, tests automatiques, guide HTML interactif et rapport LaTeX.
+L'application permet au client de consulter le menu, choisir des plats, gérer son panier, passer une commande et suivre l'état de cette commande. Elle propose également des espaces adaptés aux autres acteurs du système : l'administrateur peut consulter les statistiques et les commandes, le serveur peut suivre le traitement opérationnel, et le livreur peut consulter les livraisons disponibles et accepter une commande.
+
+Sur le plan technique, la solution repose sur \textbf{Flutter} pour le développement de l'interface Android, Windows et Web, et sur \textbf{Laravel} pour la création de l'API REST. Les données de démonstration sont stockées dans une base SQLite, ce qui permet de lancer rapidement le projet sur une machine locale pendant la soutenance.
+
+Le projet inclut plusieurs améliorations importantes : suppression du choix de rôle dans l'inscription publique, contrôle des rôles côté backend, stockage sécurisé du token côté application, configuration de l'URL API par environnement, support du lancement Web local avec CORS, tests backend et guide HTML interactif pour aider à l'installation et au dépannage.
+
+Ce rapport présente le contexte du projet, les besoins fonctionnels et non fonctionnels, la modélisation UML, l'architecture technique, la réalisation du backend et du frontend, les tests, les difficultés rencontrées et les perspectives d'amélioration. La version livrée constitue une version \textbf{démo-prod}, adaptée à une présentation académique et suffisamment structurée pour montrer un flux complet de commande restaurant.
+
+\vfill
+\noindent\textbf{Mots-clés :} Flutter, Laravel, API REST, restaurant, commande, livraison, SQLite, Android, Windows, Web, PFE.
 
 \tableofcontents
 \clearpage
@@ -343,10 +365,60 @@ GET & \texttt{/api/driver/orders} & Voir la file de livraison.\\
 \section{Réalisation frontend}
 L'application Flutter contient des écrans pour l'authentification, l'accueil, le menu, le panier, le suivi, le profil, l'espace livreur et l'espace admin. Des images de plats et un logo personnalisé remplacent l'interface Flutter par défaut.
 
+\clearpage
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\textwidth]{contact-sheet.png}
-  \caption{Aperçu des interfaces Flutter}
+  \includegraphics[height=0.70\textheight,keepaspectratio]{01-login.png}
+  \caption{Écran de connexion}
+\end{figure}
+\clearpage
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.70\textheight,keepaspectratio]{02-home.png}
+  \caption{Écran d'accueil client}
+\end{figure}
+\clearpage
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.70\textheight,keepaspectratio]{03-menu.png}
+  \caption{Écran du menu et des plats}
+\end{figure}
+\clearpage
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.70\textheight,keepaspectratio]{04-cart.png}
+  \caption{Écran du panier}
+\end{figure}
+\clearpage
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.70\textheight,keepaspectratio]{05-tracking.png}
+  \caption{Écran de suivi des commandes}
+\end{figure}
+\clearpage
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.70\textheight,keepaspectratio]{06-profile.png}
+  \caption{Écran du profil client}
+\end{figure}
+\clearpage
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.70\textheight,keepaspectratio]{07-driver.png}
+  \caption{Écran livreur}
+\end{figure}
+\clearpage
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.70\textheight,keepaspectratio]{08-admin.png}
+  \caption{Écran administrateur}
 \end{figure}
 
 \section{Guide interactif et assistant debug}
