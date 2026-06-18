@@ -41,7 +41,7 @@
 \fancyhf{}
 \lhead{\small Mon PF App}
 \rhead{\small HAJJI Yassmine -- BTS DAI}
-\cfoot{\small Rapport PFE -- \thepage}
+\cfoot{\small \thepage}
 \setlength{\headheight}{14pt}
 
 \titleformat{\chapter}
@@ -95,16 +95,24 @@
     Réalisé par & HAJJI Yassmine\\
     Établissement & Lycée Qualifiant Technique Ibn Al-Haitam\\
     Formation & BTS Développement des Applications Informatiques\\
-    Encadrement & Encadrant pédagogique : à compléter\\
+    Encadrement & Encadrant pédagogique : Abdellah Ait Omar\\
     Année de formation & 2024 -- 2026\\
   \end{tabular}
-
-  \vfill
-  {\large Version LaTeX académique -- \today}
 \end{titlepage}
 \hypersetup{pageanchor=true}
 
 \pagenumbering{roman}
+
+\begingroup
+\pagestyle{empty}
+\makeatletter
+\let\ps@plain\ps@empty
+\makeatother
+\tableofcontents
+\thispagestyle{empty}
+\clearpage
+\endgroup
+\pagestyle{fancy}
 
 \chapter*{Remerciements}
 \addcontentsline{toc}{chapter}{Remerciements}
@@ -140,8 +148,6 @@ Ce rapport présente le contexte du projet, les besoins fonctionnels et non fonc
 \vfill
 \noindent\textbf{Mots-clés :} Flutter, Laravel, API REST, restaurant, commande, livraison, SQLite, Android, Windows, Web, PFE.
 
-\tableofcontents
-\clearpage
 \phantomsection
 \pagenumbering{arabic}
 
